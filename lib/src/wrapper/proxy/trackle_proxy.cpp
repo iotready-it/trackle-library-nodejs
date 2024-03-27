@@ -57,7 +57,7 @@ void logCallbackCaller(const char *msg, int level, const char *category, void *a
     }
     else
     {
-        LOG(ERROR, "logCallbackCaller: Callback \"%s\" not found in map!", LOG_REF_CB);
+        LOG(ERROR, "logCallbackCaller: Callback \"%s\" not found in map!", LOG_REF_CB.c_str());
     }
 
     return;
@@ -223,7 +223,7 @@ system_tick_t millisCallbackCaller()
     }
     else
     {
-        LOG(ERROR, "millisCallbackCaller: Callback \"%s\" not found in map!", MILLIS_REF_CB);
+        LOG(ERROR, "millisCallbackCaller: Callback \"%s\" not found in map!", MILLIS_REF_CB.c_str());
     }
 
     return result
@@ -348,7 +348,7 @@ int sendCallbackCaller(const unsigned char *buf, uint32_t buflen, void *tmp)
     }
     else
     {
-        LOG(ERROR, "sendCallbackCaller: Callback \"%s\" not found in map!", SEND_REF_CB);
+        LOG(ERROR, "sendCallbackCaller: Callback \"%s\" not found in map!", SEND_REF_CB.c_str());
     }
 
     return result
@@ -417,7 +417,7 @@ int rcvCallbackCaller(unsigned char *buf, uint32_t buflen, void *tmp)
     }
     else
     {
-        LOG(ERROR, "rcvCallbackCaller: Callback \"%s\" not found in map!", RECEIVE_REF_CB);
+        LOG(ERROR, "rcvCallbackCaller: Callback \"%s\" not found in map!", RECEIVE_REF_CB.c_str());
     }
 
     return result
@@ -483,7 +483,7 @@ int connectCallbackCaller(const char *address, int port)
     }
     else
     {
-        LOG(ERROR, "connectCallbackCaller: Callback \"%s\" not found in map!", CONNECT_REF_CB);
+        LOG(ERROR, "connectCallbackCaller: Callback \"%s\" not found in map!", CONNECT_REF_CB.c_str());
     }
 
     return result
@@ -547,7 +547,7 @@ int disconnectCallbackCaller()
     }
     else
     {
-        LOG(ERROR, "disconnectCallbackCaller: Callback \"%s\" not found in map!", DISCONNECT_REF_CB);
+        LOG(ERROR, "disconnectCallbackCaller: Callback \"%s\" not found in map!", DISCONNECT_REF_CB.c_str());
     }
 
     return result
@@ -621,7 +621,7 @@ void systemTimeCallbackCaller(time_t time, unsigned int param, void *data)
     }
     else
     {
-        LOG(ERROR, "systemTimeCallbackCaller: Callback \"%s\" not found in map!", SYSTEM_TIME_REF_CB);
+        LOG(ERROR, "systemTimeCallbackCaller: Callback \"%s\" not found in map!", SYSTEM_TIME_REF_CB.c_str());
     }
 
     return;
@@ -676,7 +676,7 @@ void systemRebootCallbackCaller(const char *data)
     }
     else
     {
-        LOG(ERROR, "systemRebootCallbackCaller: Callback \"%s\" not found in map.", SYS_REBOOT_REF_CB);
+        LOG(ERROR, "systemRebootCallbackCaller: Callback \"%s\" not found in map.", SYS_REBOOT_REF_CB.c_str());
     }
 
     return;
@@ -764,7 +764,7 @@ void completedPublishCallback(int error, const void *data, void *callbackData, v
     }
     else
     {
-        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB);
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
     }
 
     return;
