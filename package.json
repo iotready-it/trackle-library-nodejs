@@ -1,23 +1,18 @@
 {
-  "name": "iotready-traclewrapper",
+  "name": "trackle-library-wrapper-nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/node/index.ts",
+  "main": "./src/index.ts",
   "scripts": {
     "build:lib": "chmod +x build-trackle-lib.sh && ./build-trackle-lib.sh",
     "build:wrapper": "chmod +x build-trackle-wrapper.sh && ./build-trackle-wrapper.sh",
     "build:ts": "tsc",
     "build:all": "npm run build:lib && npm run build:wrapper && npm run build:ts",
-    "start": "tsc && node ./dist/app/index.js",
-    "example": "node ./dist/test/example/example.test.js",
+    "start": "tsc && node ./dist/index.js",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "http://172.16.60.193/massimo-sciola/iotready-traclewrapper.git"
-  },
   "keywords": [
-    "tackle",
+    "trackle",
     "node-addon-api",
     "node-api"
   ],
