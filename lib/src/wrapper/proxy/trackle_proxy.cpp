@@ -1005,9 +1005,9 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
         Napi::Error::New(env, "publish: expects third argument to be a number!").ThrowAsJavaScriptException();
         return Napi::Boolean::New(env, false);
     }
-    if (!info[3].IsUndefined() && !info[3].IsNumber())
+    if (!info[3].IsUndefined() && !info[3].IsString())
     {
-        Napi::Error::New(env, "publish: expects fourth argument to be a number!").ThrowAsJavaScriptException();
+        Napi::Error::New(env, "publish: expects fourth argument to be a string!").ThrowAsJavaScriptException();
         return Napi::Boolean::New(env, false);
     }
     if (!info[4].IsUndefined() && !info[4].IsNumber())
@@ -1030,7 +1030,7 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
     // Arg4
     Event_Type eventTypeEnum = PUBLIC;
     // Arg5
-    Event_Flags eventFlagEnum = EMPTY_FLAGS;
+    Event_Flags eventFlagEnum = WITH_ACK;
     // Arg6
     Napi::Number msg_key = Napi::Number::New(env, 0);
 
@@ -1041,14 +1041,13 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
 
     if (!info[3].IsUndefined())
     {
-        int eventType = info[0].As<Napi::Number>();
+        char eventType = info[0].As<Napi::String>().Utf8Value()[0];
         eventTypeEnum = (Event_Type)eventType;
     }
 
     if (!info[4].IsUndefined())
     {
-        int eventFlag = info[0].As<Napi::Number>().Uint32Value();
-        eventFlagEnum = (Event_Flags)eventFlag;
+        int eventFlagEnum = info[4].As<Napi::Number>();
     }
 
     if (!info[5].IsUndefined())
