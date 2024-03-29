@@ -207,9 +207,7 @@ interface TrackleWrapper {
   setCompletedPublishCallback(
     callback: (
       error: number,
-      data?: any,
-      callbackData?: any,
-      reserved?: any
+      callbackData?: number
     ) => void
   ): void;
 
