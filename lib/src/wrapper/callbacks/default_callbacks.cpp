@@ -98,19 +98,13 @@ int default_send_udp_cb(const unsigned char *buf, uint32_t buflen, void *tmp)
 
 int default_receive_udp_cb(unsigned char *buf, uint32_t buflen, void *tmp)
 {
-    log({"Called receive_cb_udp "});
     size_t res = recvfrom(cloud_socket, (char *)buf, buflen, 0, (struct sockaddr *)NULL, NULL);
-    log({"receive_cb_udp received: ", std::to_string(res)});
-    if ((int)res > 0)
-    {
+    if ((int)res > 0) {
         log({"receive_cb_udp received: ", std::to_string(res)});
-        // EXAMPLE_LOG("receive_cb_udp received %d\n", res);
     }
 
     // on timeout error, set bytes received to 0
-    if ((int)res < 0 && errno == EAGAIN)
-    {
-        log({"Called send_cb_udp: TIMEOUTERROR "});
+    if ((int)res < 0 && errno == EAGAIN) {
         res = 0;
     }
 
