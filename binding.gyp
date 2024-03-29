@@ -6,17 +6,26 @@
     "targets": [
         {
             "target_name": "trackle_wrapper",
-            "cflags!": [ "-fno-exceptions" ],
-            "cflags_cc!": [ "-fno-exceptions" ],
-            "cflags": [ "-std=c++11" ],
+            "cflags!": [ "-fno-exceptions", "-Wno-non-pod-varargs" ],
+            "cflags_cc!": [ "-fno-exceptions", "-Wno-non-pod-varargs" ],
+            "cflags": [ "-std=c++11" , "-Wno-non-pod-varargs" ],
             "sources": [       
-                "./lib/src/wrapper/callbacks/default_callbacks.cpp",
-                "./lib/src/wrapper/callbacks/http_cb_handler.cpp",
-                "./lib/src/wrapper/main.cpp",
-                "./lib/src/wrapper/proxy/trackle_proxy.cpp",
-                "./lib/src/wrapper/utils/utils.cpp"],
-            "libraries": [
-                "<(trackle_dist_dir)/trackle_library.so"
+                "./lib/wrapper/callbacks/default_callbacks.cpp",
+                "./lib/wrapper/callbacks/http_cb_handler.cpp",
+                "./lib/wrapper/main.cpp",
+                "./lib/wrapper/proxy/trackle_proxy.cpp",
+                "./lib/wrapper/utils/utils.cpp"],
+            "conditions": [
+                ['OS=="mac"', {
+                    "libraries": [
+                        "<(trackle_dist_dir)/trackle_library.dylib"
+                    ],
+                }],
+                ['OS=="linux"', {
+                    "libraries": [
+                        "<(trackle_dist_dir)/trackle_library.so"
+                    ],
+                }]
             ],
             "include_dirs": [
                 "<!@(node -p \"require('node-addon-api').include\")",
