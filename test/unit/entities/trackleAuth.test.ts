@@ -1,5 +1,5 @@
 import { AssertionError } from "assert";
-import TrackleAuth from "../../../app/entities/trackleAuth";
+import TrackleAuth from "../../../src/entities/trackleAuth";
 import path from "path";
 
 describe("TrackleAuth", () => {

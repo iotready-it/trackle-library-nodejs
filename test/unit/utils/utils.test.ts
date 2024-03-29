@@ -1,5 +1,5 @@
 import { AssertionError } from "assert";
-import Utils from "../../../app/utils/utils";
+import Utils from "../../../src/utils/utils";
 import path from "path";
 
 describe("Utils", () => {

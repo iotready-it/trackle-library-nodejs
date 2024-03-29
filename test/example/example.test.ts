@@ -1,5 +1,5 @@
 import path from "path";
-import TrackleAuth from "../../app/entities/trackleAuth";
+import TrackleAuth from "../../src/entities/trackleAuth";
 import TrackleCallback from "./example.callbacks";
 
 import trackle, {
@@ -10,7 +10,7 @@ import trackle, {
   Connection_Type,
   Event_Type,
   Event_Flags,
-} from "../../app/proxy/trackleWrapper";
+} from "../../src/proxy/trackleWrapper";
 
 const relativeKeyDirPath = "../resources/keys/";
 const DEVICEID = "10af10750a1783413cbcbddd";
