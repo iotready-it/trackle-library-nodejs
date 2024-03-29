@@ -1,7 +1,7 @@
 {
     "variables": {
-        "trackle_dist_dir" : "<!@(pwd)/dist/app/lib/",
-        "trackle_src_dir" : "<!@(pwd)/lib/trackle-library-cpp-4"
+        "trackle_dist_dir" : "<!@(pwd)/dist/lib/",
+        "trackle_src_dir" : "<!@(pwd)/lib/trackle-library-cpp-v4"
     },
     "targets": [
         {

@@ -6,7 +6,7 @@ if [[ ! -n ${TRACKLE_LIB_FOLDER_NAME} ]]; then
 fi
 
 if [[ ! -n ${TRACKLE_LIB_DIST_PATH} ]]; then
-    TRACKLE_LIB_DIST_PATH="./dist/app/lib/"
+    TRACKLE_LIB_DIST_PATH="./dist/lib/"
 fi
 
 

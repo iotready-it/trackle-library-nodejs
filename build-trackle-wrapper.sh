@@ -2,7 +2,7 @@
 
 ARTIFACT_NAME="trackle_wrapper.node"
 ARTIFACT_BUILD_PATH="./build/Release/${ARTIFACT_NAME}"
-TRACKLE_WRAPPER_DIST_PATH="./dist/app/lib/"
+TRACKLE_WRAPPER_DIST_PATH="./dist/lib/"
 ARTIFACT_DIST_PATH="${TRACKLE_WRAPPER_DIST_PATH}/${ARTIFACT_NAME}"
 
 # Build configuration
