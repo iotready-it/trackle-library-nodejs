@@ -1,0 +1,4 @@
+[submodule "lib/trackle-library-cpp-v4"]
+	path = lib/trackle-library-cpp-v4
+	url = https://github.com/trackle-iot/trackle-library-cpp.git
+	branch = release/v4

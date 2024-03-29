@@ -2,8 +2,7 @@
 
 # Check env variables
 if [[ ! -n ${TRACKLE_LIB_FOLDER_NAME} ]]; then
-    echo "[ERROR] - Env TRACKLE_LIB_FOLDER_NAME not set!"
-    exit 1
+    TRACKLE_LIB_FOLDER_NAME="trackle-library-cpp-v4"
 fi
 
 if [[ ! -n ${TRACKLE_LIB_DIST_PATH} ]]; then
@@ -12,7 +11,7 @@ fi
 
 
 # Set variables
-TRACKLE_LIB_PATH="./lib/src/${TRACKLE_LIB_FOLDER_NAME}"
+TRACKLE_LIB_PATH="./lib/${TRACKLE_LIB_FOLDER_NAME}"
 
 # Create dist path
 if [ ! -d ${TRACKLE_LIB_DIST_PATH} ]; then
