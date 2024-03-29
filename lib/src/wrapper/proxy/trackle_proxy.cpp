@@ -743,7 +743,8 @@ void setPublishHealthCheckInterval(const Napi::CallbackInfo &info)
  *  setCompletedPublishCallback  *
  *********************************
  */
-// FIXME: controllare che data, callbackData siano restituiti corretti, reserved non viene restituito
+// FIXME: controllare che data sia restituito corretti, reserved non viene restituito
+// TODO: controllare che data abbia un valore in memoria attualmente mi risulta null
 void completedPublishCallback(int error, const void *data, void *callbackData, void *reserved)
 {
     LOG(TRACE, "Called completedPublishCallback");
@@ -754,13 +755,12 @@ void completedPublishCallback(int error, const void *data, void *callbackData, v
     {
         Napi::Env env = iterator->second.Env();
 
-        // Preso come esempio da callbacks.c
-        const char *strData = (const char *)data;
         uint32_t *cbPtr = (uint32_t *)callbackData;
+        // const char *strData = static_cast<const char *>(data);
+        // LOG(INFO, "Data pointed by data: %s", strData);
+        long value = reinterpret_cast<long>(cbPtr);
 
-        iterator->second.Call({Napi::Number::New(env, error),
-                               Napi::String::New(env, strData),
-                               Napi::Number::New(env, *cbPtr)});
+        iterator->second.Call({Napi::Number::New(env, error), Napi::Number::New(env, value)});
     }
     else
     {
@@ -769,6 +769,7 @@ void completedPublishCallback(int error, const void *data, void *callbackData, v
 
     return;
 }
+
 void setCompletedPublishCallback(const Napi::CallbackInfo &info)
 {
     LOG(TRACE, "Called setCompletedPublishCallback");
