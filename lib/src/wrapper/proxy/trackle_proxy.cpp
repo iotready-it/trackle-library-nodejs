@@ -898,8 +898,9 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
     }
 
     // Arg1
-    Napi::String s = info[0].As<Napi::String>();
-    const char *postFunName = s.Utf8Value().c_str();
+    // Napi::String s = info[0].As<Napi::String>();
+    std::string s = info[0].ToString().Utf8Value();
+    const char *postFunName = s.c_str();
 
     // Arg2
     HttpPostRefType funReference = returnHttpPostReference(info[1].As<Napi::Function>());
@@ -910,6 +911,7 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
 
     bool result = false;
     // TODO: Domandare se  la funReference ritorna sempre e solo string o anche i variadici
+    // LOG(INFO, "postFunction %s", postFunName);
     result = trackleLibraryInstance.post(postFunName, funReference, postFunPermissionEnum);
 
     LOG(TRACE, "postFunction was correctly done");
@@ -953,8 +955,8 @@ Napi::Boolean get(const Napi::CallbackInfo &info)
     }
 
     // Arg1
-    Napi::String s = info[0].As<Napi::String>();
-    const char *getFunName = s.Utf8Value().c_str();
+    std::string s = info[0].ToString().Utf8Value();
+    const char *getFunName = s.c_str();
 
     // Arg2
     HttpGetRefType funReference = returnHttpGetReference(info[1].As<Napi::Function>());
