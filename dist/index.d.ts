@@ -197,6 +197,13 @@ interface TrackleWrapper {
      * @returns A boolean indicating if the operation was successful.
      */
     publish(eventName: string, data: string, ttl?: number, eventType?: Event_Type, eventFlags?: Event_Flags, msgKey?: number): boolean;
+    /**
+     * setUpdateStateCallback to the server.
+     * @param arg - The name of the func.
+     * @param function_key - the key of the func.
+     * @returns 1 if it was succesful -1 unsuccesful.
+     */
+    setUpdateStateCallback(callback: (arg: string, function_key: string) => number): void;
 }
 declare const proxy: TrackleWrapper;
 export default proxy;

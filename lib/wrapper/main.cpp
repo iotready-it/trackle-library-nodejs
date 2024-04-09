@@ -90,6 +90,10 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
         "publish",
         Napi::Function::New(env, publish));
 
+    //added
+    exports.Set(
+        "setUpdateStateCallback",
+        Napi::Function::New(env, setUpdateStateCallback));
     return exports;
 }
 

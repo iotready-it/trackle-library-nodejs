@@ -15,6 +15,7 @@ static const std::string DISCONNECT_REF_CB = REF_CB_PREFIX + "disconnect_ref_cb"
 static const std::string SYSTEM_TIME_REF_CB = REF_CB_PREFIX + "system_time_ref_cb";
 static const std::string SYS_REBOOT_REF_CB = REF_CB_PREFIX + "sys_reboot_ref_cb";
 static const std::string COMPLETE_PUBLISH_REF_CB = REF_CB_PREFIX + "complete_publish_ref_cb";
+static const std::string UPDATE_STATE_REF_CB = REF_CB_PREFIX + "update_state_ref_cb";
 
 // Map to store Callbacks reference
 static std::unordered_map<std::string, Napi::FunctionReference> callbacksMap;
@@ -58,5 +59,22 @@ Napi::Boolean post(const Napi::CallbackInfo &info);
 Napi::Boolean get(const Napi::CallbackInfo &info);
 
 Napi::Boolean publish(const Napi::CallbackInfo &info);
+
+void setUpdateStateCallback(const Napi::CallbackInfo &info);
+
+
+class CallbackWrapper {
+public:
+    CallbackWrapper();
+    ~CallbackWrapper();
+    void setWrapper(napi_env env, napi_value callback);
+    int callCallback(const char *paramString);
+
+private:
+    napi_env m_env;
+    napi_ref m_callback;
+    static napi_value jsCallback(napi_env env, napi_callback_info info);
+};
+
 
 #endif

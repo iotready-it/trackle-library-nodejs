@@ -1099,3 +1099,66 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
 
     return Napi::Boolean::New(env, result);
 }
+/*
+ *********************************
+ *  setUpdateStateCallback  *
+ *********************************
+ */
+// codici per int  1: succes -1: error -2: un-auth (not the owner is making the call)
+int UpdateStateCallback(const char *function_key, const char *arg, ...)
+{
+    LOG(TRACE, "Called completedPublishCallback");
+
+    auto iterator = callbacksMap.find(UPDATE_STATE_REF_CB);
+     Napi::Value result;
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+        // const char *strData = static_cast<const char *>(data);
+        // LOG(INFO, "Data pointed by data: %s", strData);
+
+         result= iterator->second.Call({Napi::String::New(env, function_key),Napi::String::New(env, arg)});
+    }
+    else
+    {
+    
+        LOG(ERROR, "UDATE_STATE_REF_CB: Callback \"%s\" not found in map.", UPDATE_STATE_REF_CB.c_str());
+        return -1;
+    }
+
+     return result
+               ? result.ToNumber().Uint32Value()
+               : -1;
+}
+
+void setUpdateStateCallback(const Napi::CallbackInfo &info)
+{
+    LOG(TRACE, "Called setCompletedPublishCallback");
+
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+        Napi::Error::New(env, "setUpdateStateCallback: expects exactly one argument as callback!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    if (!info[0].IsFunction())
+    {
+        Napi::Error::New(env, "setUpdateStateCallback: expect a callback function!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    Napi::FunctionReference refCb = Napi::Persistent(info[0].As<Napi::Function>());
+    refCb.SuppressDestruct();
+
+    // Create a pair of <string,reference> to call in setSleepCallback
+    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(UPDATE_STATE_REF_CB), std::move(refCb)));
+
+    trackleLibraryInstance.setUpdateStateCallback(UpdateStateCallback);
+   
+
+    LOG(TRACE, "setUpdateStateCallback was correctly done");
+
+    return;
+}

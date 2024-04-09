@@ -275,6 +275,19 @@ interface TrackleWrapper {
     eventFlags?: Event_Flags,
     msgKey?: number
   ): boolean;
+
+  /**
+   * setUpdateStateCallback to the server.
+   * @param arg - The name of the func.
+   * @param function_key - the key of the func.
+   * @returns 1 if it was succesful -1 unsuccesful.
+   */
+  setUpdateStateCallback(
+    callback: (
+      arg: string,
+      function_key: string
+    ) => number
+  ): void;
 }
 
 const handler = {};
