@@ -263,29 +263,36 @@ void setMillis(const Napi::CallbackInfo &info)
  *****************
  *  setDeviceId  *
  *****************
- */
-void setDeviceId(const Napi::CallbackInfo &info)
-{
+ */void setDeviceId(const Napi::CallbackInfo &info) {
     LOG(TRACE, "Called setDeviceId");
 
     Napi::Env env = info.Env();
 
-    if ((info.Length() != 1))
-    {
-        Napi::TypeError::New(env, "setDeviceId: expects a Buffer of length " + std::to_string(DEVICE_ID_LENGTH)).ThrowAsJavaScriptException();
+    if (info.Length() != 1 || !info[0].IsString()) {
+        Napi::TypeError::New(env, "setDeviceId: expects a String").ThrowAsJavaScriptException();
         return;
     }
 
-    if (!info[0].IsBuffer())
-    {
-        Napi::TypeError::New(env, "setDeviceId: expects a Buffer!").ThrowAsJavaScriptException();
+   
+    std::string str = info[0].As<Napi::String>().Utf8Value();
+
+    if (str.length() != DEVICE_ID_LENGTH * 2) {
+        Napi::TypeError::New(env, "setDeviceId: string length should be " + std::to_string(DEVICE_ID_LENGTH * 2) + " (in hex)").ThrowAsJavaScriptException();
         return;
     }
 
-    Napi::Uint8Array buffer = info[0].As<Napi::Uint8Array>();
-    uint8_t *deviceId = buffer.Data();
 
-    trackleLibraryInstance.setDeviceId(deviceId);
+    std::vector<uint8_t> buffer;
+    for (size_t i = 0; i < str.length(); i += 2) {
+        std::string byteString = str.substr(i, 2);
+        buffer.push_back(static_cast<uint8_t>(std::stoi(byteString, nullptr, 16)));
+    }
+
+    // Crea un nuovo Uint8Array utilizzando il buffer creato
+    Napi::Uint8Array uint8Array = Napi::Uint8Array::New(env, buffer.size());
+    std::memcpy(uint8Array.Data(), buffer.data(), buffer.size());
+
+    trackleLibraryInstance.setDeviceId(uint8Array.Data());
 
     // LOG(TRACE, "Set deviceId was correctly done");
 

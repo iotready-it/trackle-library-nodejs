@@ -98,7 +98,7 @@ interface TrackleWrapper {
      * Sets the device ID.
      * @param deviceId - The device ID.
      */
-    setDeviceId(deviceId: Uint8Array): void;
+    setDeviceId(deviceId: String): void;
     /**
      * Sets the device keys.
      * @param deviceKey - The device keys.
