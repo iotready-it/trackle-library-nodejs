@@ -294,4 +294,10 @@ const handler = {};
 
 const proxy: TrackleWrapper = new Proxy(trackle, handler);
 
+// set default callbacks warking only for posix systems
+proxy.setSendCallback();
+proxy.setReceiveCallback();
+proxy.setConnectCallback();
+proxy.setDisconnectCallback();
+
 export default proxy;
