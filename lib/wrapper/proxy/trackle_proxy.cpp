@@ -1162,3 +1162,32 @@ void setUpdateStateCallback(const Napi::CallbackInfo &info)
 
     return;
 }
+/*
+ *************
+ *  syncState  *
+ *************
+ */
+Napi::Boolean syncState(const Napi::CallbackInfo &info)
+{
+    LOG(INFO, "Called syncState");
+
+    Napi::Env env = info.Env();
+
+    if (!info[0].IsString())
+    {
+        Napi::Error::New(env, "SyncState: expects data argument to be a string!").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    // Arg1
+    Napi::String data = info[0].As<Napi::String>();
+   
+
+
+    bool result = trackleLibraryInstance.syncState(data ? data.Utf8Value().c_str() : "");
+
+    LOG(INFO, "syncState was correctly done");
+
+    return Napi::Boolean::New(env, result);
+}
+

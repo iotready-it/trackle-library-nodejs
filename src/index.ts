@@ -288,6 +288,16 @@ interface TrackleWrapper {
       function_key: string
     ) => number
   ): void;
+
+  /**
+   * syncState an event to the server.
+   * @param data - The data to be published.
+   * @returns A boolean indicating if the operation was successful.
+   */
+  syncState(
+    data: string,
+  ): boolean;
+
 }
 
 const handler = {};

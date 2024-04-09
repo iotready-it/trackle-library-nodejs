@@ -94,6 +94,9 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setUpdateStateCallback",
         Napi::Function::New(env, setUpdateStateCallback));
+    exports.Set(
+        "syncState",
+        Napi::Function::New(env, syncState));
     return exports;
 }
 

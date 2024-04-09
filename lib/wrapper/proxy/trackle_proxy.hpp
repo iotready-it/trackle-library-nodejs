@@ -60,6 +60,9 @@ Napi::Boolean get(const Napi::CallbackInfo &info);
 
 Napi::Boolean publish(const Napi::CallbackInfo &info);
 
+Napi::Boolean syncState(const Napi::CallbackInfo &info);
+
+
 void setUpdateStateCallback(const Napi::CallbackInfo &info);
 
 
