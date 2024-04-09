@@ -54,4 +54,9 @@ var Event_Flags;
 })(Event_Flags || (exports.Event_Flags = Event_Flags = {}));
 const handler = {};
 const proxy = new Proxy(trackle, handler);
+// set default callbacks warking only for posix systems
+proxy.setSendCallback();
+proxy.setReceiveCallback();
+proxy.setConnectCallback();
+proxy.setDisconnectCallback();
 exports.default = proxy;
