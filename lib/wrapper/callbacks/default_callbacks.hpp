@@ -13,6 +13,7 @@ typedef unsigned int uint32_t;
 int default_send_udp_cb(const unsigned char *buf, uint32_t buflen, void *tmp);
 int default_receive_udp_cb(unsigned char *buf, uint32_t buflen, void *tmp);
 int default_connect_udp_cb(const char *address, int port);
+void Callbacks_setConnectionOverride(bool override, char *address, int port);
 int default_disconnect_udp_cb();
 
 #endif

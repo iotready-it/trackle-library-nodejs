@@ -8,6 +8,21 @@ static struct sockaddr_in cloud_addr;
 static char overriddenAddress[MAX_CONN_ADDRESS_LEN + 1] = {0};
 static int overriddenPort = 0;
 
+void Callbacks_setConnectionOverride(bool override, char *address, int port)
+{
+    if (override)
+    {
+        strncpy(overriddenAddress, address, MAX_CONN_ADDRESS_LEN + 1);
+        overriddenAddress[MAX_CONN_ADDRESS_LEN] = '\0';
+        overriddenPort = port;
+    }
+    else
+    {
+        overriddenAddress[0] = '\0';
+        overriddenPort = 0;
+    }
+}
+
 int default_connect_udp_cb(const char *address, int port)
 {
 

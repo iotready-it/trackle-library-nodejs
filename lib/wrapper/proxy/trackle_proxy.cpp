@@ -561,7 +561,45 @@ void setConnectCallback(const Napi::CallbackInfo &info)
 
     return;
 }
+/*
+ ************************
+ *  setOverrideConnection  *
+ ************************
+ */
+void setOverrideConnection(const Napi::CallbackInfo &info) {
+    LOG(TRACE, "Called setConnectCallback");
 
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 2) {
+        Napi::Error::New(env, "setOverrideConnection: expects exactly 2 arguments!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    if (!info[0].IsString()) {
+        Napi::Error::New(env, "setOverrideConnection: expect ip address to be a string!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    if (!info[1].IsNumber()) {
+        Napi::Error::New(env, "setOverrideConnection: expect port to be a number!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    // Ottieni l'indirizzo IP dalla prima stringa e il numero di porta dall'argomento numerico
+    std::string ipadress = info[0].As<Napi::String>().Utf8Value();
+    int port = info[1].As<Napi::Number>().Int32Value();
+
+    // Effettua la chiamata alla tua funzione di libreria C++
+     Callbacks_setConnectionOverride(true, const_cast<char*>(ipadress.c_str()), port);
+
+    LOG(TRACE, "setConnectCb was correctly done");
+
+    return;
+}
+
+
+ 
 /*
  ***************************
  *  setDisconnectCallback  *

@@ -43,6 +43,7 @@ void setKeys(const Napi::CallbackInfo &info);
 void setSendCallback(const Napi::CallbackInfo &info);
 void setReceiveCallback(const Napi::CallbackInfo &info);
 void setConnectCallback(const Napi::CallbackInfo &info);
+void setOverrideConnection(const Napi::CallbackInfo &info);
 void setDisconnectCallback(const Napi::CallbackInfo &info);
 
 void setSystemTimeCallback(const Napi::CallbackInfo &info);

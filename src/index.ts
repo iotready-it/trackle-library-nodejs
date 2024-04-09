@@ -298,6 +298,18 @@ interface TrackleWrapper {
     data: string,
   ): boolean;
 
+  /**
+   * syncState an event to the server.
+   * @param ipAddress - The Ip of your server.
+   * @param port - The port of your server.
+   * @returns A boolean indicating if the operation was successful.
+   */
+  setOverrideConnection(
+    ipAddress: string,
+    port: number
+  ): void;
+
+
 }
 
 const handler = {};

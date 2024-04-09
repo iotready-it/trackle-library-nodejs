@@ -97,6 +97,9 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "syncState",
         Napi::Function::New(env, syncState));
+    exports.Set(
+        "setOverrideConnection",
+        Napi::Function::New(env, setOverrideConnection));
     return exports;
 }
 
