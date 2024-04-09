@@ -23,6 +23,9 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setFirmwareVersion",
         Napi::Function::New(env, setFirmwareVersion));
+            exports.Set(
+        "setProductId",
+        Napi::Function::New(env, setProductId));
     exports.Set(
         "setOtaMethod",
         Napi::Function::New(env, setOtaMethod));

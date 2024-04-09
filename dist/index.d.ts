@@ -80,6 +80,11 @@ interface TrackleWrapper {
      */
     setFirmwareVersion(firmwareVersion: number): void;
     /**
+     * Sets the firmware version.
+     * @param productid - The product id.
+     */
+    setProductId(productid: number): void;
+    /**
      * Sets the OTA method.
      * @param method - The OTA method.
      */

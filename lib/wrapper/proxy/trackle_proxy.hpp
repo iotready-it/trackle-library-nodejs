@@ -27,6 +27,7 @@ void setLogCallback(const Napi::CallbackInfo &info);
 void setLogLevel(const Napi::CallbackInfo &info);
 void setEnabled(const Napi::CallbackInfo &info);
 void setFirmwareVersion(const Napi::CallbackInfo &info);
+void setProductId(const Napi::CallbackInfo &info);
 void setOtaMethod(const Napi::CallbackInfo &info);
 void setConnectionType(const Napi::CallbackInfo &info);
 

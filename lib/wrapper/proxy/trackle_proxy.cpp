@@ -152,6 +152,32 @@ void setFirmwareVersion(const Napi::CallbackInfo &info)
 }
 
 /*
+ ************************
+ *  setProductId  *
+ ************************
+ */
+void setProductId(const Napi::CallbackInfo &info)
+{
+    // LOG(TRACE, "Called setFirmwareVersion");
+
+    Napi::Env env = info.Env();
+
+    if (!info.Length() != 0 && info[0].IsNumber())
+    {
+        Napi::TypeError::New(env, "setProductId: expects a Number arg!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    int version = info[0].As<Napi::Number>().Uint32Value();
+
+    trackleLibraryInstance.setProductId(version);
+
+    // LOG(TRACE, "setFirmwareVersion was correctly done");
+
+    return;
+}
+
+/*
  ******************
  *  setOtaMethod  *
  ******************
