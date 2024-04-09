@@ -204,6 +204,19 @@ interface TrackleWrapper {
      * @returns 1 if it was succesful -1 unsuccesful.
      */
     setUpdateStateCallback(callback: (arg: string, function_key: string) => number): void;
+    /**
+     * syncState an event to the server.
+     * @param data - The data to be published.
+     * @returns A boolean indicating if the operation was successful.
+     */
+    syncState(data: string): boolean;
+    /**
+     * syncState an event to the server.
+     * @param ipAddress - The Ip of your server.
+     * @param port - The port of your server.
+     * @returns A boolean indicating if the operation was successful.
+     */
+    setOverrideConnection(ipAddress: string, port: number): void;
 }
 declare const proxy: TrackleWrapper;
 export default proxy;
