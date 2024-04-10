@@ -289,27 +289,30 @@ void setMillis(const Napi::CallbackInfo &info)
  *****************
  *  setDeviceId  *
  *****************
- */void setDeviceId(const Napi::CallbackInfo &info) {
+ */
+void setDeviceId(const Napi::CallbackInfo &info)
+{
     LOG(TRACE, "Called setDeviceId");
 
     Napi::Env env = info.Env();
 
-    if (info.Length() != 1 || !info[0].IsString()) {
+    if (info.Length() != 1 || !info[0].IsString())
+    {
         Napi::TypeError::New(env, "setDeviceId: expects a String").ThrowAsJavaScriptException();
         return;
     }
 
-   
     std::string str = info[0].As<Napi::String>().Utf8Value();
 
-    if (str.length() != DEVICE_ID_LENGTH * 2) {
+    if (str.length() != DEVICE_ID_LENGTH * 2)
+    {
         Napi::TypeError::New(env, "setDeviceId: string length should be " + std::to_string(DEVICE_ID_LENGTH * 2) + " (in hex)").ThrowAsJavaScriptException();
         return;
     }
 
-
     std::vector<uint8_t> buffer;
-    for (size_t i = 0; i < str.length(); i += 2) {
+    for (size_t i = 0; i < str.length(); i += 2)
+    {
         std::string byteString = str.substr(i, 2);
         buffer.push_back(static_cast<uint8_t>(std::stoi(byteString, nullptr, 16)));
     }
