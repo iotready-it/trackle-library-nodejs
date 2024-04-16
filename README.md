@@ -28,7 +28,7 @@ to see the implemented methods you can check on this link [example](#example) or
 * `Event_Flags` 
 this are all enum declareted types that will help you with the values that function expects
 
-## example 
+## Example 
 
 ```
 import fs from "fs";
@@ -58,12 +58,12 @@ const setLog = (msg: string, level: number, category: string): void => {
   }
 };
 
-// Post callbacks declaration 
+// Post callbacks declaration (creating the functions that will be called from user in the online platform)
 
 const post1 = (name: string): number => {
   console.log("called post1 : " + name);
-    console.log("Post1 - Pippo");
-    return 1;
+  console.log("Post1 - Pippo");
+  return 1;
 }
 
 const post2 = (name: string): number => {
@@ -75,7 +75,7 @@ const post2 = (name: string): number => {
   return -1;
 };
 
-const postSuccess= (name: string): number => {
+const postSuccess = (name: string): number => {
   console.log(`Richiamata callback postSuccess, arg: ${name}`);
   return 1;
 }
@@ -85,7 +85,7 @@ const postFailure = (name: string): number => {
   return -1;
 };
 
-// GET CALLBACKS DECLARATION
+// Get callback declaration (creating the functions that will be called from user in the online platform)
 
 const getString = (name: string): string => {
   console.log("Called getString : " + name);
@@ -137,7 +137,6 @@ const getDouble = (name: string): number => {
   return 0.4567812;
 };
 
-
 const getJson = (name: string): string => {
   console.log("Called getJson : " + name);
   if (name) {
@@ -157,13 +156,12 @@ const systemTimeCallback = (
 
 };
 
-// Called when a publish is completed
 const completedPublishCallback = (
   error: number,
   callbackData?: number
 ): void => {
-  console.log("msg key: "+callbackData)
-  console.log("error: "+error)
+  console.log("msg key: " + callbackData)
+  console.log("error: " + error)
 
 };
 
@@ -171,8 +169,8 @@ const UpdateStateCallback = (
   function_key: string,
   arg: string
 ): number => {
-  console.log("key value: "+function_key)
-  console.log("arg: "+arg)
+  console.log("key value: " + function_key)
+  console.log("arg: " + arg)
   return -1;
 
 };
@@ -203,7 +201,7 @@ let msg_key = 1;
 let firstConnect = true;
 const PRIVATE_KEY = fs.readFileSync("Path_To_Your_.der_Key_file");
 
-trackle.setMillis(getMillis); 
+trackle.setMillis(getMillis);
 trackle.setLogLevel(Log_Level.TRACKLE_INFO);
 trackle.setLogCallback(setLog);
 
@@ -215,13 +213,12 @@ trackle.setFirmwareVersion(1);
 
 trackle.setConnectionType(Connection_Type.CONNECTION_TYPE_WIFI);
 
-// set Callbacks
+// set system Callbacks
 
 trackle.setSystemTimeCallback(systemTimeCallback);
 trackle.setSystemRebootCallback(systemRebootCallback);
 trackle.setCompletedPublishCallback(completedPublishCallback);
 trackle.setUpdateStateCallback(UpdateStateCallback);
-
 
 // Registering POST functions callable from cloud
 
@@ -237,7 +234,7 @@ trackle.post(
 );
 trackle.post(
   "postSuccess",
- postSuccess,
+  postSuccess,
   Function_PermissionDef.ALL_USERS
 );
 trackle.post(
@@ -267,10 +264,10 @@ console.log("Starting Loop...");
 setInterval(async () => {
   trackle.loop();
 
-// Every 5 seconds make a publish
+  // Every 5 seconds make a publish
 
-if (getMillis() - prevPubMillis > 5000) {
-  
+  if (getMillis() - prevPubMillis > 5000) {
+
     trackle.publish(
       "greetings",
       "Hello, World!",
