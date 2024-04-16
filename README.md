@@ -1,138 +1,287 @@
-# Setup
 
-## Prerequisiti
+# NodeJS Trackle Wrapper
 
-### Pacchetti
+## Table of contents
+* [installation](#installation)
+* [methods](#implemented-methods)
+* [Get a Device ID and a private key](#get-a-device-id-and-a-private-key)
+* [example](#example)
 
-Per poter utilizzare questo progetto sono necessari alcuni strumenti all'utilizzo della libreria `node-addon-api`.
+## Installation 
+ `npm install trackle-library-nodejs`
 
-Di seguito vengono riportati le principali dipendenze:
+## Get a Device ID and a private key
+* Create an account on Trackle Cloud (https://trackle.cloud/)
+* Open "My Devices" section from the drawer
+* Click the button "Claim a device"
+* Select the link "I don't have a device id", then Continue
+* The Device Id will be shown on the screen and the private key file will be download with name <device_id>.der where <device_id> is Device ID taken from Trackle.
 
-- NodeJS
-- node-gyp
-- gcc
-- python
+## Implemented methods  
+to see the implemented methods you can check on this link [example](#example) or import trackle from the installed library and check it there, with the library you also will import 
+* `Log_Level`
+* `Function_PermissionDef`
+* `Data_TypeDef`
+* `Ota_Method`
+* `Connection_Type`
+* `Event_Type`
+* `Event_Flags` 
+this are all enum declareted types that will help you with the values that function expects
 
-> NB: Fare comunque riferimento alla pagina della libreria: [node-addon-api](https://github.com/nodejs/node-addon-api/blob/main/README.md)
-
-Aggiungere all'includePath anche la cartella di node per avere a disposizione la libreria <node_api.h> dipendenza della <napi.h> della libreria node-addon-api!
-
-## Libreria
-
-Per poter compilare la libreria saranno necessari alcuni strumenti come:
-
-- gcc
-- g++
-- make
-
-Dopodichè sarà necessario posizionare la libreria di trackle di cui si vuole wrappare il contenuto nel percorso `./lib/src/<libFolder>`
-
-```bash
-# Ad esempio
- ./lib/src/trackle-library-cpp-4/
-```
-
-**NB:** A questo punto è **OBBLIGATORIO** impostare la variabile d'ambiente `TRACKLE_LIB_FOLDER_NAME`, dove va inserito il nome della cartella che contiene la libreria del passo precedente.  
-Ad esempio nel mio caso
+## example 
 
 ```
-export TRACKLE_LIB_FOLDER_NAME=trackle-library-cpp-4
-```
+import fs from "fs";
 
-## IncludePath
+import trackle, {
+  Log_Level,
+  Function_PermissionDef,
+  Data_TypeDef,
+  Connection_Type,
+  Event_Type,
+  Event_Flags
+} from "trackle-library-nodejs";
 
-Aggiungere all'includePath di compilazione del proprio ide tutte le cartelle che si vogliono utilizzare per le varie compilazioni, ad esempio io ho messo queste:
+// Define callbacks
 
-```txt
-- /home/scimam/.nvm/versions/node/v18.13.0/include/node = Nodejs
-- ${workspaceFolder}/** = includo tutte le sottocarelle del mio workspace
-- ${workspaceFolder}/node_modules/node-addon-api = cartella di node-addon-api per l'utilizzo della libreria <napi.h>
-- ${workspaceFolder}/lib/src/trackle-library-cpp-4/include = cartella con gli include necessari per la build della libreria trackle
+const getMillis = () => {
+  const date = new Date();
+  const ms: number = date.getTime();
+  return ms;
+};
 
-```
+const setLog = (msg: string, level: number, category: string): void => {
+  if (category.length === 0) {
+    console.log(`[${level}] [] ${msg}`);
+  } else {
+    console.log(`[${level}] [${category}] ${msg}`);
+  }
+};
 
-# Utilizzo
+// Post callbacks declaration 
 
-## Build Libreria
+const post1 = (name: string): number => {
+  console.log("called post1 : " + name);
+    console.log("Post1 - Pippo");
+    return 1;
+}
 
-Per prima cosa bisogna compilare la libreria e prima di farlo, modificare il file `./build-trackle-lib.sh` ed inserire correttamente le variabili nella sezione `#Set variables`.
+const post2 = (name: string): number => {
+  if (name) {
+    console.log("Post2 - Pluto");
+    return 0;
+  }
 
-Dopodichè lanciare il comando
+  return -1;
+};
 
-```bash
-npm run build:lib
-```
+const postSuccess= (name: string): number => {
+  console.log(`Richiamata callback postSuccess, arg: ${name}`);
+  return 1;
+}
 
-A questo punto se tutto è andato correttamente l'artifact potremo trovarlo in `/dist/app/lib/trackle_library.so`.
+const postFailure = (name: string): number => {
+  console.log(`Richiamata callback postFailure, arg: ${name}`);
+  return -1;
+};
 
-## Build Wrapper
+// GET CALLBACKS DECLARATION
 
-Il codice del wrapper si trova in `./lib/src/wrapper/` e contiene un proxy per l'interfacciamento delle funzionalità tra nodejs e c++.  
-Per la sua compilazione sarà necessario lanciare il comando:
+const getString = (name: string): string => {
+  console.log("Called getString : " + name);
+  if (name) {
+    console.log("getString - ");
+    return "Hello";
+  }
 
-```bash
-npm run build:wrapper
-```
+  return "World";
+};
 
-così facendo verrà generato un file `trackleWrapper.node` che finirà nella cartella di destinazione standard `./dist/lib`.
+const getChar = (name: string): string => {
+  console.log("Called getChar : " + name);
+  if (name) {
+    console.log("getChar - ");
+    return "C";
+  }
 
-> NB: cartelle di \<source\> e di \<destination\> sono modificabili nel file `./binding.gyp`.
+  return "a";
+};
 
-## Progetto Node
+const getInt = (name: string): number => {
+  console.log("Called getInt : " + name);
+  if (name) {
+    console.log("getInt - ");
+    return 5678;
+  }
 
-Ora si è liberi di crearsi il proprio progetto node semplicemente importando il proxy (e/o gli enum che possono servire), dopodichè sarà sufficiente passare all'oggetto `TrackleAuth` il nome del device con la relativa cartella in cui è contenuto il file ".der" della chiave privata associata a quel device.
+  return 1234;
+};
 
-Di seguito un codice di esempio:
+const getBoolean = (name: string): boolean => {
+  console.log("Called getBoolean : " + name);
+  if (name) {
+    console.log("getBoolean - ");
+    return true;
+  }
 
-```js
-import trackle, { Log_Level, ... } from "./proxy/trackleWrapper";
-import TrackleAuth from "./entities/trackleAuth";
+  return false;
+};
 
-const CERTIFICATE_DIR_PATH = "/home/scimam/Downloads/";
-const auth = new TrackleAuth("10af10750a1783413cbcbddd", CERTIFICATE_DIR_PATH);
+const getDouble = (name: string): number => {
+  console.log("Called getDouble : " + name);
+  if (name) {
+    console.log("getDouble - ");
+    return 1.4563333;
+  }
 
-// Inizio set metodi wrappati
-trackle.setDeviceId(auth.getDeviceId(trackle.getMaxDeviceIdLength()));
-trackle.setKeys(auth.getDeviceKey(trackle.getMaxDevicePrivateKeyLength()));
-...
-```
+  return 0.4567812;
+};
 
-Nel caso si voglia utilizzare la connessione udp di default in c++ della libreria, basterà dichiarare i metodi che gestiscono la connessione senza parametri:
 
-```js
-trackle.setConnectCallback();
-trackle.setDisconnectCallback();
-trackle.setSendCallback();
-trackle.setReceiveCallback();
-```
+const getJson = (name: string): string => {
+  console.log("Called getJson : " + name);
+  if (name) {
+    console.log("getJson - ");
+    return JSON.stringify({ name: "pippo", surname: "pluto" });
+  }
 
-## Build completo
+  return JSON.stringify({ name: "Hello", surname: "World" });
+};
 
-E' possibile anche lanciare in un unico comando la compilazione di tutto per creare una `dist` in automatico.
+const systemTimeCallback = (
+  time: number,
+  param: number,
+  data: Buffer | undefined
+): void => {
+  console.log(time);
 
-```bash
-npm run build:all
-```
+};
 
-il quale racchiude:
+// Called when a publish is completed
+const completedPublishCallback = (
+  error: number,
+  callbackData?: number
+): void => {
+  console.log("msg key: "+callbackData)
+  console.log("error: "+error)
 
-```bash
-npm run build:lib
-npm run build:wrapper
-npm run build:ts
-```
+};
 
-# Esempio
+const UpdateStateCallback = (
+  function_key: string,
+  arg: string
+): number => {
+  console.log("key value: "+function_key)
+  console.log("arg: "+arg)
+  return -1;
 
-Per lanciare il programma di esempio bisogna per prima cosa buildare l'intero progetto (lib, wrapper, ts), modificare il path e il nome del deviceId di cui si vuole fare un test in `${workspaceFolder}/src/test/example/example.test.ts`:
+};
 
-```js
-const relativeKeyDirPath = "relative/path/to/key";
-const DEVICEID = "deviceIdCorretto";
-```
+const ConnectionStatusCallback = (
+  status: number,
+) => {
+  if (firstConnect && status === 2) {
+    trackle.publish(
+      "First",
+      "Hello",
+      30,
+      Event_Type.PUBLIC,
+      Event_Flags.WITH_ACK,
+      1
+    );
+    firstConnect = false;
+  }
+};
 
-e lanciare
+const systemRebootCallback = (data: string) => {
+  console.log("Reboot request ignored!");
 
-```bash
-npm run example
+};
+
+let prevPubMillis = 0;
+let msg_key = 1;
+let firstConnect = true;
+const PRIVATE_KEY = fs.readFileSync("Path_To_Your_.der_Key_file");
+
+trackle.setMillis(getMillis); 
+trackle.setLogLevel(Log_Level.TRACKLE_INFO);
+trackle.setLogCallback(setLog);
+
+// Set cloud credentials
+trackle.setDeviceId("Your_Device_ID");
+trackle.setKeys(PRIVATE_KEY);
+
+trackle.setFirmwareVersion(1);
+
+trackle.setConnectionType(Connection_Type.CONNECTION_TYPE_WIFI);
+
+// set Callbacks
+
+trackle.setSystemTimeCallback(systemTimeCallback);
+trackle.setSystemRebootCallback(systemRebootCallback);
+trackle.setCompletedPublishCallback(completedPublishCallback);
+trackle.setUpdateStateCallback(UpdateStateCallback);
+
+
+// Registering POST functions callable from cloud
+
+trackle.post(
+  "post1",
+  post1,
+  Function_PermissionDef.ALL_USERS
+);
+trackle.post(
+  "post2",
+  post2,
+  Function_PermissionDef.ALL_USERS
+);
+trackle.post(
+  "postSuccess",
+ postSuccess,
+  Function_PermissionDef.ALL_USERS
+);
+trackle.post(
+  "postFailure",
+  postFailure,
+  Function_PermissionDef.ALL_USERS
+);
+
+
+// Registering GET functions callable from cloud
+
+trackle.get("getInt", getInt, Data_TypeDef.VAR_INT);
+trackle.get("getString", getString, Data_TypeDef.VAR_STRING);
+trackle.get("getDouble", getDouble, Data_TypeDef.VAR_DOUBLE);
+trackle.get("getChar", getChar, Data_TypeDef.VAR_CHAR);
+trackle.get("getJson", getJson, Data_TypeDef.VAR_JSON);
+trackle.get("getBool", getBoolean, Data_TypeDef.VAR_BOOLEAN);
+
+trackle.setConnectionStatusCallback(ConnectionStatusCallback)
+
+// Connection to trackle
+trackle.connect();
+
+console.log("Startup completed. Running...");
+console.log("Starting Loop...");
+
+setInterval(async () => {
+  trackle.loop();
+
+// Every 5 seconds make a publish
+
+if (getMillis() - prevPubMillis > 5000) {
+  
+    trackle.publish(
+      "greetings",
+      "Hello, World!",
+      30,
+      Event_Type.PUBLIC,
+      Event_Flags.WITH_ACK,
+      msg_key
+    );
+    msg_key++;
+    prevPubMillis = new Date().getTime();
+  }
+}, 10);
+
 ```
