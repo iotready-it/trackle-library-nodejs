@@ -1404,4 +1404,64 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
 
     return Napi::Boolean::New(env, result);
 }
+/*
+ *************
+ *  connectionStatusCallback  *
+ *************
+ */
+void ConnectionStatusCallback(Connection_Status_Type status)
 
+    {
+    LOG(TRACE, "Called completedPublishCallback %d", status);
+
+    auto iterator = callbacksMap.find(CONNECTION_STATUS_REF_CB);
+    Napi::Value result;
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+        // const char *strData = static_cast<const char *>(data);
+        // LOG(INFO, "Data pointed by data: %s", strData);
+
+        result = iterator->second.Call({Napi::Number::New(env, status)});
+    }
+    else
+    {
+
+        LOG(ERROR, "UDATE_STATE_REF_CB: Callback \"%s\" not found in map.", CONNECTION_STATUS_REF_CB.c_str());
+        return;
+    }
+
+    return;
+}
+   
+
+void setConnectionStatusCallback(const Napi::CallbackInfo &info)
+{
+    LOG(TRACE, "Called setCompletedPublishCallback");
+
+    Napi::Env env = info.Env();
+
+    if (info.Length() != 1)
+    {
+        Napi::Error::New(env, "setConnectionStatusCallback: expects exactly one argument as callback!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    if (!info[0].IsFunction())
+    {
+        Napi::Error::New(env, "setConnectionStatusCallback: expect a callback function!").ThrowAsJavaScriptException();
+        return;
+    }
+
+    Napi::FunctionReference refCb = Napi::Persistent(info[0].As<Napi::Function>());
+    refCb.SuppressDestruct();
+
+    // Create a pair of <string,reference> to call in setSleepCallback
+    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(CONNECTION_STATUS_REF_CB), std::move(refCb)));
+
+    trackleLibraryInstance.setConnectionStatusCallback(ConnectionStatusCallback);
+
+    LOG(TRACE, "setConnectionStatusCallback was correctly done");
+
+    return;
+}

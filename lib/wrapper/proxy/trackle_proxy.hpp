@@ -16,6 +16,8 @@ static const std::string SYSTEM_TIME_REF_CB = REF_CB_PREFIX + "system_time_ref_c
 static const std::string SYS_REBOOT_REF_CB = REF_CB_PREFIX + "sys_reboot_ref_cb";
 static const std::string COMPLETE_PUBLISH_REF_CB = REF_CB_PREFIX + "complete_publish_ref_cb";
 static const std::string UPDATE_STATE_REF_CB = REF_CB_PREFIX + "update_state_ref_cb";
+static const std::string CONNECTION_STATUS_REF_CB = REF_CB_PREFIX + "connection_status_ref_cb";
+
 
 // Map to store Callbacks reference
 static std::unordered_map<std::string, Napi::FunctionReference> callbacksMap;
@@ -50,6 +52,7 @@ void setSystemTimeCallback(const Napi::CallbackInfo &info);
 void setSystemRebootCallback(const Napi::CallbackInfo &info);
 void setPublishHealthCheckInterval(const Napi::CallbackInfo &info);
 void setCompletedPublishCallback(const Napi::CallbackInfo &info);
+void setConnectionStatusCallback(const Napi::CallbackInfo &info);
 
 // Connection
 Napi::Number connect(const Napi::CallbackInfo &info);

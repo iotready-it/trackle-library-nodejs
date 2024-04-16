@@ -100,6 +100,9 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setOverrideConnection",
         Napi::Function::New(env, setOverrideConnection));
+    exports.Set(
+        "setConnectionStatusCallback",
+        Napi::Function::New(env, setConnectionStatusCallback));
     return exports;
 }
 

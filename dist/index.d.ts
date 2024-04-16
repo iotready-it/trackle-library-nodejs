@@ -205,6 +205,12 @@ interface TrackleWrapper {
      */
     setUpdateStateCallback(callback: (function_key: string, arg: string) => number | Promise<number>): void;
     /**
+   * setConnectionStatusCallback to the server.
+   * @param status - The name of the func.
+   * @returns 1 if it was succesful -1 unsuccesful.
+   */
+    setConnectionStatusCallback(callback: (status: number) => number | Promise<number>): void;
+    /**
      * syncState an event to the server.
      * @param data - The data to be published.
      * @returns A boolean indicating if the operation was successful.

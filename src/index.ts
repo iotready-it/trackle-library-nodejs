@@ -289,6 +289,18 @@ interface TrackleWrapper {
     ) => number | Promise<number>
   ): void;
 
+    /**
+   * setConnectionStatusCallback to the server.
+   * @param status - The name of the func.
+   * @returns 0 if it is not connected 1 if is connecting 2 if is connected.
+   */
+    setConnectionStatusCallback(
+      callback: (
+        status: number
+      ) => number | Promise<number>
+    ): void;
+  
+
   /**
    * syncState an event to the server.
    * @param data - The data to be published.
