@@ -97,7 +97,6 @@
             },
             "sources": [
                 "lib/wrapper/callbacks/default_callbacks.cpp",
-                "lib/wrapper/callbacks/http_cb_handler.cpp",
                 "lib/wrapper/main.cpp",
                 "lib/wrapper/proxy/trackle_proxy.cpp",
                 "lib/wrapper/utils/utils.cpp"

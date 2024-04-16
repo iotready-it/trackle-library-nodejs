@@ -3,9 +3,9 @@
 #include "trackle_proxy.hpp"
 
 #include "../callbacks/default_callbacks.hpp"
-#include "../callbacks/http_cb_handler.hpp"
 #include "../utils/utils.hpp"
-
+#define POST_NUMBER 20
+#define GET_NUMBER 20
 using namespace std;
 
 // Global variables
@@ -569,22 +569,26 @@ void setConnectCallback(const Napi::CallbackInfo &info)
  *  setOverrideConnection  *
  ************************
  */
-void setOverrideConnection(const Napi::CallbackInfo &info) {
+void setOverrideConnection(const Napi::CallbackInfo &info)
+{
     LOG(TRACE, "Called setConnectCallback");
 
     Napi::Env env = info.Env();
 
-    if (info.Length() != 2) {
+    if (info.Length() != 2)
+    {
         Napi::Error::New(env, "setOverrideConnection: expects exactly 2 arguments!").ThrowAsJavaScriptException();
         return;
     }
 
-    if (!info[0].IsString()) {
+    if (!info[0].IsString())
+    {
         Napi::Error::New(env, "setOverrideConnection: expect ip address to be a string!").ThrowAsJavaScriptException();
         return;
     }
 
-    if (!info[1].IsNumber()) {
+    if (!info[1].IsNumber())
+    {
         Napi::Error::New(env, "setOverrideConnection: expect port to be a number!").ThrowAsJavaScriptException();
         return;
     }
@@ -594,15 +598,13 @@ void setOverrideConnection(const Napi::CallbackInfo &info) {
     int port = info[1].As<Napi::Number>().Int32Value();
 
     // Effettua la chiamata alla tua funzione di libreria C++
-     Callbacks_setConnectionOverride(true, const_cast<char*>(ipadress.c_str()), port);
+    Callbacks_setConnectionOverride(true, const_cast<char *>(ipadress.c_str()), port);
 
     LOG(TRACE, "setConnectCb was correctly done");
 
     return;
 }
 
-
- 
 /*
  ***************************
  *  setDisconnectCallback  *
@@ -941,6 +943,28 @@ void loop(const Napi::CallbackInfo &info)
  **********
  */
 
+int defaultPost(const char *args, bool isOwner, const char *funKey)
+{
+    std::string name = std::string("POST_") + std::string(funKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, args)});
+        return result
+                   ? result.ToNumber().Int32Value()
+                   : -4;
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return -3;
+    }
+}
+
 Napi::Boolean post(const Napi::CallbackInfo &info)
 {
     LOG(TRACE, "Called postFunction");
@@ -975,9 +999,10 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
     // Napi::String s = info[0].As<Napi::String>();
     std::string s = info[0].ToString().Utf8Value();
     const char *postFunName = s.c_str();
-
+    std::string name = "POST_" + s;
     // Arg2
-    HttpPostRefType funReference = returnHttpPostReference(info[1].As<Napi::Function>());
+    Napi::FunctionReference refCb = Napi::Persistent(info[1].As<Napi::Function>());
+    refCb.SuppressDestruct();
 
     // Arg3
     int postFunPermission = info[2].As<Napi::Number>().Uint32Value();
@@ -986,11 +1011,18 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
     bool result = false;
     // TODO: Domandare se  la funReference ritorna sempre e solo string o anche i variadici
     // LOG(INFO, "postFunction %s", postFunName);
-    result = trackleLibraryInstance.post(postFunName, funReference, postFunPermissionEnum);
-
-    LOG(TRACE, "postFunction was correctly done");
-
-    return Napi::Boolean::New(env, result);
+    result = trackleLibraryInstance.post(postFunName, defaultPost, postFunPermissionEnum);
+    if (result == true)
+    {
+        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
+        LOG(TRACE, "postFunction was correctly done");
+        return Napi::Boolean::New(env, result);
+    }
+    else
+    {
+        LOG(TRACE, "postFunction wasn't correctly done");
+        return Napi::Boolean::New(env, result);
+    }
 }
 
 /*
@@ -998,6 +1030,117 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
  *  GET  *
  **********
  */
+
+// typedef void *(*user_variable_pointer_t)(const char *paramString, const char* varKey);
+
+bool defaultBool(const char *paramString, const char *varKey)
+{
+    std::string name = std::string("GET_") + std::string(varKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, paramString)});
+
+        return result.ToBoolean().Value();
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return false;
+    }
+}
+
+int defaultInt(const char *paramString, const char *varKey)
+{
+    std::string name = std::string("GET_") + std::string(varKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, paramString)});
+
+        return result.IsNumber() ? result.ToNumber().Int32Value() : -4;
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return -3;
+    }
+}
+
+double defaultDouble(const char *paramString, const char *varKey)
+{
+    std::string name = std::string("GET_") + std::string(varKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, paramString)});
+        return result.IsNumber() ? result.ToNumber().DoubleValue() : -4;
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return -3;
+    }
+}
+
+static char jsonResponse[1024];
+void *defaultJson(const char *paramString, const char *varKey)
+{
+    std::string name = std::string("GET_") + std::string(varKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, paramString)});
+
+        std::string str = result.ToString().Utf8Value();
+
+        return strdup(str.c_str());
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return strdup("");
+    }
+}
+const char *defaultChar(const char *paramString, const char *varKey)
+{
+    std::string name = std::string("GET_") + std::string(varKey);
+    auto iterator = callbacksMap.find(name);
+
+    if (iterator != callbacksMap.end())
+    {
+        Napi::Env env = iterator->second.Env();
+
+        Napi::Value result = iterator->second.Call({Napi::String::New(env, paramString)});
+
+        std::string str = result.ToString().Utf8Value();
+
+        return strdup(str.c_str());
+    }
+    else
+    {
+        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
+
+        return strdup("");
+    }
+}
+
 Napi::Boolean get(const Napi::CallbackInfo &info)
 {
     LOG(TRACE, "Called getFunction");
@@ -1031,16 +1174,49 @@ Napi::Boolean get(const Napi::CallbackInfo &info)
     // Arg1
     std::string s = info[0].ToString().Utf8Value();
     const char *getFunName = s.c_str();
+    std::string name = "GET_" + s;
 
     // Arg2
-    HttpGetRefType funReference = returnHttpGetReference(info[1].As<Napi::Function>());
+    Napi::FunctionReference refCb = Napi::Persistent(info[1].As<Napi::Function>());
+    refCb.SuppressDestruct();
 
     // Arg3
     int returnType = info[2].As<Napi::Number>().Uint32Value();
     Data_TypeDef returnTypeEnum = (Data_TypeDef)returnType;
-
     bool result = false;
-    result = trackleLibraryInstance.get(getFunName, funReference, returnTypeEnum);
+
+    if (returnTypeEnum == VAR_BOOLEAN)
+    {
+        result = trackleLibraryInstance.get(getFunName, defaultBool);
+    }
+    else if (returnTypeEnum == VAR_INT)
+    {
+        result = trackleLibraryInstance.get(getFunName, defaultInt);
+    }
+    else if (returnTypeEnum == VAR_CHAR || returnTypeEnum == VAR_STRING)
+    {
+        result = trackleLibraryInstance.get(getFunName, defaultChar);
+    }
+    else if (returnTypeEnum == VAR_JSON)
+    {
+        result = trackleLibraryInstance.get(getFunName, defaultJson, VAR_JSON);
+    }
+    else if (returnTypeEnum == VAR_DOUBLE)
+    {
+        result = trackleLibraryInstance.get(getFunName, defaultDouble);
+    }
+
+    if (result == true)
+    {
+        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
+        LOG(TRACE, "postFunction was correctly done");
+        return Napi::Boolean::New(env, result);
+    }
+    else
+    {
+        LOG(INFO, "postFunction wasn't correctly done");
+        return Napi::Boolean::New(env, result);
+    }
 
     LOG(TRACE, "getFunction was correctly done");
 
@@ -1151,23 +1327,23 @@ int UpdateStateCallback(const char *function_key, const char *arg, ...)
     LOG(TRACE, "Called completedPublishCallback");
 
     auto iterator = callbacksMap.find(UPDATE_STATE_REF_CB);
-     Napi::Value result;
+    Napi::Value result;
     if (iterator != callbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
         // const char *strData = static_cast<const char *>(data);
         // LOG(INFO, "Data pointed by data: %s", strData);
 
-         result= iterator->second.Call({Napi::String::New(env, function_key),Napi::String::New(env, arg)});
+        result = iterator->second.Call({Napi::String::New(env, function_key), Napi::String::New(env, arg)});
     }
     else
     {
-    
+
         LOG(ERROR, "UDATE_STATE_REF_CB: Callback \"%s\" not found in map.", UPDATE_STATE_REF_CB.c_str());
         return -1;
     }
 
-     return result
+    return result
                ? result.ToNumber().Uint32Value()
                : -1;
 }
@@ -1197,7 +1373,6 @@ void setUpdateStateCallback(const Napi::CallbackInfo &info)
     callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(UPDATE_STATE_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setUpdateStateCallback(UpdateStateCallback);
-   
 
     LOG(TRACE, "setUpdateStateCallback was correctly done");
 
@@ -1222,8 +1397,6 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
 
     // Arg1
     Napi::String data = info[0].As<Napi::String>();
-   
-
 
     bool result = trackleLibraryInstance.syncState(data ? data.Utf8Value().c_str() : "");
 
