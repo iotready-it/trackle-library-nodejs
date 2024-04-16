@@ -292,12 +292,11 @@ interface TrackleWrapper {
     /**
    * setConnectionStatusCallback to the server.
    * @param status - The name of the func.
-   * @returns 0 if it is not connected 1 if is connecting 2 if is connected.
    */
     setConnectionStatusCallback(
       callback: (
         status: number
-      ) => number | Promise<number>
+      ) => void
     ): void;
   
 
