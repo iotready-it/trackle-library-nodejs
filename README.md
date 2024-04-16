@@ -18,7 +18,7 @@
 * The Device Id will be shown on the screen and the private key file will be download with name <device_id>.der where <device_id> is Device ID taken from Trackle.
 
 ## Implemented methods  
-to see the implemented methods you can check on this link [example](#example) or import trackle from the installed library and check it there, with the library you also will import 
+To see the implemented methods you can check on this link [example](#example) or import trackle from the installed library and check it there, with the library you also will import 
 * `Log_Level`
 * `Function_PermissionDef`
 * `Data_TypeDef`
