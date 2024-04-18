@@ -1423,6 +1423,7 @@ void ConnectionStatusCallback(Connection_Status_Type status)
 
         // TODO: Togliere! Solo di test per Steven
         emitter.Call({Napi::String::New(env, "test")});
+        emitter.Call({Napi::String::New(env, "testWithReturnNumber"), Napi::Number::New(env, status)});
 
         result = iterator->second.Call({Napi::Number::New(env, status)});
     }
