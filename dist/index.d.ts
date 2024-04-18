@@ -54,8 +54,8 @@ interface TrackleWrapper extends EventEmitter {
     Data_TypeDef: any;
     event: EventEmitter;
     setEmitter(event: any): void;
-    on(event: "test", listener: () => void): this;
-    on(event: "testWithReturnNumber", listener: (...args: any[]) => number): this;
+    on(event: "test", eventHandler: () => void): this;
+    on(event: "testWithReturnNumber", eventHandler: (...args: any[]) => void): this;
     /**
      * Gets the maximum length of the device ID.
      * @returns The maximum length of the device ID.
