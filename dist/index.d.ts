@@ -1,4 +1,7 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
+import { EventEmitter } from "stream";
 export declare enum Log_Level {
     TRACKLE_TRACE = 1,
     TRACKLE_INFO = 30,
@@ -45,10 +48,13 @@ export declare enum Event_Flags {
 /**
  * Represents the TrackleWrapper interface.
  */
-interface TrackleWrapper {
+interface TrackleWrapper extends EventEmitter {
     Log_Level: any;
     Function_PermissionDef: any;
     Data_TypeDef: any;
+    event: EventEmitter;
+    setEmitter(event: any): void;
+    on(event: "test", listener: (...args: any[]) => void): this;
     /**
      * Gets the maximum length of the device ID.
      * @returns The maximum length of the device ID.
@@ -205,9 +211,9 @@ interface TrackleWrapper {
      */
     setUpdateStateCallback(callback: (function_key: string, arg: string) => number | Promise<number>): void;
     /**
-   * setConnectionStatusCallback to the server.
-   * @param status - The name of the func.
-   */
+     * setConnectionStatusCallback to the server.
+     * @param status - The name of the func.
+     */
     setConnectionStatusCallback(callback: (status: number) => void): void;
     /**
      * syncState an event to the server.

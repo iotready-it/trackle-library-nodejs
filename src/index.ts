@@ -1,3 +1,5 @@
+import { EventEmitter } from "stream";
+
 const trackle = require("bindings")("trackle_wrapper.node");
 
 export enum Log_Level {
@@ -53,10 +55,15 @@ export enum Event_Flags {
 /**
  * Represents the TrackleWrapper interface.
  */
-interface TrackleWrapper {
+interface TrackleWrapper extends EventEmitter {
   Log_Level: any;
   Function_PermissionDef: any;
   Data_TypeDef: any;
+
+  event: EventEmitter;
+  setEmitter(event: any): void;
+
+  on(event: "test", listener: (...args: any[]) => void): this;
 
   /**
    * Gets the maximum length of the device ID.
@@ -209,10 +216,7 @@ interface TrackleWrapper {
    * @param callback - The completed publish callback function.
    */
   setCompletedPublishCallback(
-    callback: (
-      error: number,
-      callbackData?: number
-    ) => void
+    callback: (error: number, callbackData?: number) => void
   ): void;
 
   /**
@@ -283,31 +287,21 @@ interface TrackleWrapper {
    * @returns 1 if it was succesful -1 unsuccesful.
    */
   setUpdateStateCallback(
-    callback: (
-      function_key: string,
-      arg: string
-    ) => number | Promise<number>
+    callback: (function_key: string, arg: string) => number | Promise<number>
   ): void;
 
-    /**
+  /**
    * setConnectionStatusCallback to the server.
    * @param status - The name of the func.
    */
-    setConnectionStatusCallback(
-      callback: (
-        status: number
-      ) => void
-    ): void;
-  
+  setConnectionStatusCallback(callback: (status: number) => void): void;
 
   /**
    * syncState an event to the server.
    * @param data - The data to be published.
    * @returns A boolean indicating if the operation was successful.
    */
-  syncState(
-    data: string,
-  ): boolean;
+  syncState(data: string): boolean;
 
   /**
    * syncState an event to the server.
@@ -315,17 +309,22 @@ interface TrackleWrapper {
    * @param port - The port of your server.
    * @returns A boolean indicating if the operation was successful.
    */
-  setOverrideConnection(
-    ipAddress: string,
-    port: number
-  ): void;
-
-
+  setOverrideConnection(ipAddress: string, port: number): void;
 }
 
-const handler = {};
+const handler = {
+  get: function (target: any, prop: any, receiver: any) {
+    if (prop === "on") {
+      return target.event.on.bind(target.event);
+    }
+    return Reflect.get(target, prop);
+  },
+};
 
 const proxy: TrackleWrapper = new Proxy(trackle, handler);
+
+proxy.event = new EventEmitter();
+proxy.setEmitter(proxy.event.emit.bind(proxy.event));
 
 // set default callbacks warking only for posix systems
 proxy.setSendCallback();

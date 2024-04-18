@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Event_Flags = exports.Event_Type = exports.Data_TypeDef = exports.Function_PermissionDef = exports.Connection_Type = exports.Ota_Method = exports.Log_Level = void 0;
+const stream_1 = require("stream");
 const trackle = require("bindings")("trackle_wrapper.node");
 var Log_Level;
 (function (Log_Level) {
@@ -52,8 +53,17 @@ var Event_Flags;
     Event_Flags[Event_Flags["WITH_ACK"] = 8] = "WITH_ACK";
     Event_Flags[Event_Flags["ALL_FLAGS"] = 10] = "ALL_FLAGS";
 })(Event_Flags || (exports.Event_Flags = Event_Flags = {}));
-const handler = {};
+const handler = {
+    get: function (target, prop, receiver) {
+        if (prop === "on") {
+            return target.event.on.bind(target.event);
+        }
+        return Reflect.get(target, prop);
+    },
+};
 const proxy = new Proxy(trackle, handler);
+proxy.event = new stream_1.EventEmitter();
+proxy.setEmitter(proxy.event.emit.bind(proxy.event));
 // set default callbacks warking only for posix systems
 proxy.setSendCallback();
 proxy.setReceiveCallback();

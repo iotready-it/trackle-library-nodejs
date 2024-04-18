@@ -10,6 +10,7 @@ using namespace std;
 
 // Global variables
 static Trackle trackleLibraryInstance;
+static Napi::FunctionReference emitter;
 
 /*
  **************************
@@ -1411,7 +1412,7 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
  */
 void ConnectionStatusCallback(Connection_Status_Type status)
 
-    {
+{
     LOG(TRACE, "Called completedPublishCallback %d", status);
 
     auto iterator = callbacksMap.find(CONNECTION_STATUS_REF_CB);
@@ -1419,8 +1420,9 @@ void ConnectionStatusCallback(Connection_Status_Type status)
     if (iterator != callbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
-        // const char *strData = static_cast<const char *>(data);
-        // LOG(INFO, "Data pointed by data: %s", strData);
+
+        // TODO: Togliere! Solo di test per Steven
+        emitter.Call({Napi::String::New(env, "test")});
 
         result = iterator->second.Call({Napi::Number::New(env, status)});
     }
@@ -1433,7 +1435,6 @@ void ConnectionStatusCallback(Connection_Status_Type status)
 
     return;
 }
-   
 
 void setConnectionStatusCallback(const Napi::CallbackInfo &info)
 {
@@ -1464,4 +1465,17 @@ void setConnectionStatusCallback(const Napi::CallbackInfo &info)
     LOG(TRACE, "setConnectionStatusCallback was correctly done");
 
     return;
+}
+
+/*
+ *************
+ *  setEmitter  *
+ *************
+ */
+Napi::Value setEmitter(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    emitter = Napi::Persistent(info[0].As<Napi::Function>());
+    emitter.SuppressDestruct();
+    return Napi::Boolean::New(env, true);
 }

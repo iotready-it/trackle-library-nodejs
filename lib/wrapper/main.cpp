@@ -23,7 +23,7 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setFirmwareVersion",
         Napi::Function::New(env, setFirmwareVersion));
-            exports.Set(
+    exports.Set(
         "setProductId",
         Napi::Function::New(env, setProductId));
     exports.Set(
@@ -90,7 +90,7 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
         "publish",
         Napi::Function::New(env, publish));
 
-    //added
+    // added
     exports.Set(
         "setUpdateStateCallback",
         Napi::Function::New(env, setUpdateStateCallback));
@@ -103,6 +103,10 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setConnectionStatusCallback",
         Napi::Function::New(env, setConnectionStatusCallback));
+
+    exports.Set(
+        "setEmitter",
+        Napi::Function::New(env, setEmitter));
     return exports;
 }
 
