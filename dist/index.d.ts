@@ -177,7 +177,7 @@ interface TrackleWrapper {
      * @param permission - The function permission definition.
      * @returns A boolean indicating if the operation was successful.
      */
-    post(callbackName: string, callback: (arg: string, args?: []) => number, permission: Function_PermissionDef): boolean;
+    post(callbackName: string, callback: (arg: string, args?: []) => number | Promise<number>, permission: Function_PermissionDef): boolean;
     /**
      * Gets a function from the server.
      * @param callbackName - The name of the callback function.

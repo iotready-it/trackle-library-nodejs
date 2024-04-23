@@ -1,7 +1,7 @@
 #include <trackle.h>
 #include "logging.h"
 #include "trackle_proxy.hpp"
-
+#include <future>
 #include "../callbacks/default_callbacks.hpp"
 #include "../utils/utils.hpp"
 #define POST_NUMBER 20
@@ -943,6 +943,25 @@ void loop(const Napi::CallbackInfo &info)
  **********
  */
 
+
+struct PostCallbackData {
+    std::promise<int> promise;
+};
+
+void PostCallback(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    if (info.Length() != 1 || !info[0].IsNumber())
+    {
+        Napi::TypeError::New(env, "Number expected").ThrowAsJavaScriptException();
+        return;
+    }
+
+    PostCallbackData *data = reinterpret_cast<PostCallbackData *>(info.Data());
+    int result = info[0].As<Napi::Number>().Int32Value();
+    data->promise.set_value(result);
+}
+
 int defaultPost(const char *args, bool isOwner, const char *funKey)
 {
     std::string name = std::string("POST_") + std::string(funKey);
@@ -952,19 +971,51 @@ int defaultPost(const char *args, bool isOwner, const char *funKey)
     {
         Napi::Env env = iterator->second.Env();
 
+        // Creiamo un oggetto promise/future per sincronizzare l'esecuzione
+        std::promise<void> syncPromise;
+        std::future<void> syncFuture = syncPromise.get_future();
+
+        // Creiamo una struttura di callback per gestire la risoluzione asincrona della promise
+        PostCallbackData data;
+
+        // Chiamiamo la funzione then sulla Promise con la callback come argomento
         Napi::Value result = iterator->second.Call({Napi::String::New(env, args)});
-        return result
-                   ? result.ToNumber().Int32Value()
-                   : -4;
+        if (!result.IsPromise())
+        {
+            return result.ToNumber().Int32Value();
+        }
+        else
+        {
+            Napi::Promise promise = result.As<Napi::Promise>();
+            Napi::Value ret = promise.Get("then");
+            if (!ret.IsFunction())
+            {
+                return -15;
+            }
+            Napi::Function then = ret.As<Napi::Function>();
+
+            // Creiamo una lambda che cattura il puntatore alla struttura PostCallbackData
+            auto callback = [&data](const Napi::CallbackInfo &info)
+            {
+                PostCallback(info);
+            };
+
+            Napi::Function jsCallback = Napi::Function::New(env, callback, "cpp_callback", &data);
+
+            then.Call(promise, {jsCallback});
+
+            
+            syncFuture.wait();
+
+          
+            return data.promise.get_future().get();
+        }
     }
     else
     {
-        LOG(ERROR, "completedPublishCallback: Callback \"%s\" not found in map.", COMPLETE_PUBLISH_REF_CB.c_str());
-
         return -3;
     }
 }
-
 Napi::Boolean post(const Napi::CallbackInfo &info)
 {
     LOG(TRACE, "Called postFunction");
@@ -1411,7 +1462,7 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
  */
 void ConnectionStatusCallback(Connection_Status_Type status)
 
-    {
+{
     LOG(TRACE, "Called completedPublishCallback %d", status);
 
     auto iterator = callbacksMap.find(CONNECTION_STATUS_REF_CB);
@@ -1433,7 +1484,6 @@ void ConnectionStatusCallback(Connection_Status_Type status)
 
     return;
 }
-   
 
 void setConnectionStatusCallback(const Napi::CallbackInfo &info)
 {
