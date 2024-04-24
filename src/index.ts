@@ -149,7 +149,7 @@ interface TrackleWrapper {
       buffer: Buffer,
       bufferLen: number,
       tmp: any
-    ) => number | Promise<number>
+    ) => number 
   ): void;
 
   /**
@@ -163,7 +163,7 @@ interface TrackleWrapper {
       buffer: Buffer,
       bufferLen: number,
       tmp: any
-    ) => number | Promise<number>
+    ) => number 
   ): number;
 
   /**
@@ -173,7 +173,7 @@ interface TrackleWrapper {
    * @returns The result of the operation.
    */
   setConnectCallback(
-    callback?: (address: string, port: number) => number | Promise<number>
+    callback?: (address: string, port: number) => number
   ): void;
 
   /**
@@ -182,7 +182,7 @@ interface TrackleWrapper {
    * @param callback - The disconnect callback function.
    * @returns The result of the operation.
    */
-  setDisconnectCallback(callback?: () => number | Promise<number>): void;
+  setDisconnectCallback(callback?: () => number ): void;
 
   /**
    * Sets the system time callback function.
@@ -286,7 +286,7 @@ interface TrackleWrapper {
     callback: (
       function_key: string,
       arg: string
-    ) => number | Promise<number>
+    ) => number 
   ): void;
 
     /**

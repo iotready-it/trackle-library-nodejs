@@ -115,28 +115,28 @@ interface TrackleWrapper {
      * @param callback - The send callback function.
      * @returns The result of the operation.
      */
-    setSendCallback(callback?: (buffer: Buffer, bufferLen: number, tmp: any) => number | Promise<number>): void;
+    setSendCallback(callback?: (buffer: Buffer, bufferLen: number, tmp: any) => number): void;
     /**
      * Sets the receive callback function.
      * @default // With no parameters, the function will be called with the default c++ libraries.
      * @param callback - The receive callback function.
      * @returns The result of the operation.
      */
-    setReceiveCallback(callback?: (buffer: Buffer, bufferLen: number, tmp: any) => number | Promise<number>): number;
+    setReceiveCallback(callback?: (buffer: Buffer, bufferLen: number, tmp: any) => number): number;
     /**
      * Sets the connect callback function.
      * @default // With no parameters, the function will be called with the default c++ libraries.
      * @param callback - The connect callback function.
      * @returns The result of the operation.
      */
-    setConnectCallback(callback?: (address: string, port: number) => number | Promise<number>): void;
+    setConnectCallback(callback?: (address: string, port: number) => number): void;
     /**
      * Sets the disconnect callback function.
      * @default // With no parameters, the function will be called with the default c++ libraries.
      * @param callback - The disconnect callback function.
      * @returns The result of the operation.
      */
-    setDisconnectCallback(callback?: () => number | Promise<number>): void;
+    setDisconnectCallback(callback?: () => number): void;
     /**
      * Sets the system time callback function.
      * @param callback - The system time callback function.
@@ -203,7 +203,7 @@ interface TrackleWrapper {
      * @param function_key - the key of the func.
      * @returns 1 if it was succesful -1 unsuccesful.
      */
-    setUpdateStateCallback(callback: (function_key: string, arg: string) => number | Promise<number>): void;
+    setUpdateStateCallback(callback: (function_key: string, arg: string) => number): void;
     /**
    * setConnectionStatusCallback to the server.
    * @param status - The name of the func.
