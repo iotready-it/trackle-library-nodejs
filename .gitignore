@@ -208,3 +208,6 @@ build
 
 # End of https://www.toptal.com/developers/gitignore/api/node,c++,visualstudiocode
 package-lock.json
+
+# Keys .der file for test
+*/*.der

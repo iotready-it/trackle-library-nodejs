@@ -18,7 +18,6 @@ static const std::string COMPLETE_PUBLISH_REF_CB = REF_CB_PREFIX + "complete_pub
 static const std::string UPDATE_STATE_REF_CB = REF_CB_PREFIX + "update_state_ref_cb";
 static const std::string CONNECTION_STATUS_REF_CB = REF_CB_PREFIX + "connection_status_ref_cb";
 
-
 // Map to store Callbacks reference
 static std::unordered_map<std::string, Napi::FunctionReference> callbacksMap;
 
@@ -66,11 +65,10 @@ Napi::Boolean publish(const Napi::CallbackInfo &info);
 
 Napi::Boolean syncState(const Napi::CallbackInfo &info);
 
-
 void setUpdateStateCallback(const Napi::CallbackInfo &info);
 
-
-class CallbackWrapper {
+class CallbackWrapper
+{
 public:
     CallbackWrapper();
     ~CallbackWrapper();
@@ -82,6 +80,5 @@ private:
     napi_ref m_callback;
     static napi_value jsCallback(napi_env env, napi_callback_info info);
 };
-
 
 #endif

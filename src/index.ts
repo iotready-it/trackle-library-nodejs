@@ -241,7 +241,7 @@ interface TrackleWrapper {
   post(
     callbackName: string,
     callback: (arg: string, args?: []) => number,
-    permission: Function_PermissionDef
+    permission?: Function_PermissionDef
   ): boolean;
 
   /**

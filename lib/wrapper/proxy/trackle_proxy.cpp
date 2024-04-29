@@ -1411,7 +1411,7 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
  */
 void ConnectionStatusCallback(Connection_Status_Type status)
 
-    {
+{
     LOG(TRACE, "Called completedPublishCallback %d", status);
 
     auto iterator = callbacksMap.find(CONNECTION_STATUS_REF_CB);
@@ -1433,7 +1433,6 @@ void ConnectionStatusCallback(Connection_Status_Type status)
 
     return;
 }
-   
 
 void setConnectionStatusCallback(const Napi::CallbackInfo &info)
 {
