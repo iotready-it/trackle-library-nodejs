@@ -6,7 +6,7 @@
 * [methods](#implemented-methods)
 * [Get a Device ID and a private key](#get-a-device-id-and-a-private-key)
 * [example](#example)
-
+* [Attention](#Attention)
 ## Installation 
  `npm install trackle-library-nodejs`
 
@@ -282,3 +282,5 @@ setInterval(async () => {
 }, 10);
 
 ```
+## Attention 
+The **POST** and **GET** methods are implemented to be **synchronous**, so if you want to implement a JavaScript function with them, **you should NOT return a Promise**.
