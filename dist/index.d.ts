@@ -12,6 +12,10 @@ export declare enum Ota_Method {
     PUSH = 1,
     SEND_URL = 2
 }
+export declare enum Subscription_Scope_Type {
+    MY_DEVICES = 0,
+    ALL_DEVICES = 1
+}
 export declare enum Connection_Type {
     CONNECTION_TYPE_UNDEFINED = 0,
     CONNECTION_TYPE_WIFI = 1,
@@ -222,6 +226,19 @@ interface TrackleWrapper {
      * @returns A boolean indicating if the operation was successful.
      */
     setOverrideConnection(ipAddress: string, port: number): void;
+    /**
+     * subscribe to an event
+     * @param event - The event that you want to subscribe at.
+     * @param handler - the C.B that will recieve the data of the event
+     * @param sub_type - optional: subscription type
+     * @param deviceID - optional: the device id you want to be subscripted
+     * @returns A boolean indicating if the operation was successful.
+     */
+    subscribe(event: string, handler: Function, sub_type?: Subscription_Scope_Type, deviceID?: string): void;
+    /**
+    * unsubscribe from all events
+    */
+    unSubscribe(): boolean;
 }
 declare const proxy: TrackleWrapper;
 export default proxy;

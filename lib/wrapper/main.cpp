@@ -103,6 +103,12 @@ Napi::Object init(Napi::Env env, Napi::Object exports)
     exports.Set(
         "setConnectionStatusCallback",
         Napi::Function::New(env, setConnectionStatusCallback));
+    exports.Set(
+        "subscribe",
+        Napi::Function::New(env, subscribe));
+    exports.Set(
+        "unSubscribe",
+        Napi::Function::New(env, unSubscribe));
     return exports;
 }
 

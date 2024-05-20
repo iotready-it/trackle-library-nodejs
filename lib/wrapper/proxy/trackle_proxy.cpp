@@ -1465,3 +1465,152 @@ void setConnectionStatusCallback(const Napi::CallbackInfo &info)
 
     return;
 }
+
+/*
+ *************
+ *  Subscribe  *
+ *************
+ */
+
+bool startsWith(const std::string &str, const std::string &prefix)
+{
+    if (str.size() < prefix.size())
+    {
+        return false;
+    }
+    for (size_t i = 0; i < prefix.size(); ++i)
+    {
+        if (str[i] != prefix[i])
+        {
+            return false;
+        }
+    }
+    return true;
+}
+EventHandler defaultHandler = [](const char *name, const char *data)
+{
+    for (const auto &entry : subscribeCallbacksMap)
+    {
+        std::string nameStr = name;
+        std::string entryFirstStr = entry.first;
+
+        if (startsWith(nameStr, entryFirstStr))
+        {
+
+            Napi::Env env = entry.second.Env();
+            Napi::Value result = entry.second.Call({Napi::String::New(env, name), Napi::String::New(env, data)});
+            if (result.IsEmpty() || result.IsUndefined())
+            {
+                LOG(ERROR, "defaultHandler: Callback \"%s\" returned an error or is not defined properly.", entry.first.c_str());
+            }
+        }
+    }
+};
+
+Napi::Boolean subscribe(const Napi::CallbackInfo &info)
+{
+    LOG(ERROR, "Called Subscribe");
+    bool result = false;
+    Napi::Env env = info.Env();
+
+    if (info.Length() < 2 || info.Length() > 4)
+    {
+        Napi::Error::New(env, "subscribe: expects 2 to 4 arguments!").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    if (!info[0].IsString())
+    {
+        Napi::Error::New(env, "subscribe: expects first argument to be a string!").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    if (!info[1].IsFunction())
+    {
+        Napi::Error::New(env, "subscribe: expects second argument to be a function!").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+    if (info.Length() == 4)
+    {
+        if (!info[3].IsString())
+        {
+            Napi::Error::New(env, "subscribe: expects 4th argument to be a string!").ThrowAsJavaScriptException();
+            return Napi::Boolean::New(env, false);
+        }
+    }
+
+    std::string subFunName = info[0].ToString().Utf8Value();
+    Napi::FunctionReference refCb = Napi::Persistent(info[1].As<Napi::Function>());
+    refCb.SuppressDestruct();
+
+    Subscription_Scope_Type subScopeEnum;
+
+    if (info.Length() == 3)
+    {
+        if (!info[2].IsNumber())
+        {
+            Napi::Error::New(env, "getFunction: expects third argument to be a number!").ThrowAsJavaScriptException();
+            return Napi::Boolean::New(env, false);
+        }
+        subScopeEnum = (Subscription_Scope_Type)info[2].As<Napi::Number>().Uint32Value();
+        result = trackleLibraryInstance.subscribe(subFunName.c_str(), defaultHandler, subScopeEnum);
+    }
+    else if ((info.Length() == 4))
+    {
+
+        if (!info[2].IsNumber())
+        {
+
+            std::string deviceId = info[3].ToString().Utf8Value();
+
+            result = trackleLibraryInstance.subscribe(subFunName.c_str(), defaultHandler, deviceId.c_str());
+        }
+
+        else if (info[2].IsNumber() && info[3].IsString())
+        {
+            subScopeEnum = (Subscription_Scope_Type)info[2].As<Napi::Number>().Uint32Value();
+            std::string deviceId = info[3].ToString().Utf8Value();
+            result = trackleLibraryInstance.subscribe(subFunName.c_str(), defaultHandler, subScopeEnum, deviceId.c_str());
+        }
+    }
+
+    if (info.Length() == 2)
+    {
+
+        result = trackleLibraryInstance.subscribe(subFunName.c_str(), defaultHandler);
+    }
+
+    if (result)
+    {
+        subscribeCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(subFunName), std::move(refCb)));
+        LOG(ERROR, "Subscribe was correctly done");
+    }
+    else
+    {
+        LOG(ERROR, "Subscribe wasn't correctly done");
+    }
+    return Napi::Boolean::New(env, result);
+}
+
+/*
+ *************
+ *  unSubscribe  *
+ *************
+ */
+
+Napi::Boolean unSubscribe(const Napi::CallbackInfo &info)
+{
+    LOG(TRACE, "Called unSubscribe");
+    Napi::Env env = info.Env();
+
+    if (info.Length() >= 1)
+    {
+        Napi::Error::New(env, "unSubscribe: expects to not have args").ThrowAsJavaScriptException();
+        return Napi::Boolean::New(env, false);
+    }
+
+    trackleLibraryInstance.unsubscribe();
+    subscribeCallbacksMap.clear();
+
+    return Napi::Boolean::New(env, true);
+}

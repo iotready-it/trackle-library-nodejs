@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Event_Flags = exports.Event_Type = exports.Data_TypeDef = exports.Function_PermissionDef = exports.Connection_Type = exports.Ota_Method = exports.Log_Level = void 0;
+exports.Event_Flags = exports.Event_Type = exports.Data_TypeDef = exports.Function_PermissionDef = exports.Connection_Type = exports.Subscription_Scope_Type = exports.Ota_Method = exports.Log_Level = void 0;
 const trackle = require("bindings")("trackle_wrapper.node");
 var Log_Level;
 (function (Log_Level) {
@@ -17,6 +17,11 @@ var Ota_Method;
     Ota_Method[Ota_Method["PUSH"] = 1] = "PUSH";
     Ota_Method[Ota_Method["SEND_URL"] = 2] = "SEND_URL";
 })(Ota_Method || (exports.Ota_Method = Ota_Method = {}));
+var Subscription_Scope_Type;
+(function (Subscription_Scope_Type) {
+    Subscription_Scope_Type[Subscription_Scope_Type["MY_DEVICES"] = 0] = "MY_DEVICES";
+    Subscription_Scope_Type[Subscription_Scope_Type["ALL_DEVICES"] = 1] = "ALL_DEVICES";
+})(Subscription_Scope_Type || (exports.Subscription_Scope_Type = Subscription_Scope_Type = {}));
 var Connection_Type;
 (function (Connection_Type) {
     Connection_Type[Connection_Type["CONNECTION_TYPE_UNDEFINED"] = 0] = "CONNECTION_TYPE_UNDEFINED";

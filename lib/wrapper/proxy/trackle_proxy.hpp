@@ -68,6 +68,9 @@ Napi::Boolean publish(const Napi::CallbackInfo &info);
 
 Napi::Boolean syncState(const Napi::CallbackInfo &info);
 
+Napi::Boolean subscribe(const Napi::CallbackInfo &info);
+Napi::Boolean unSubscribe(const Napi::CallbackInfo &info);
+
 void setUpdateStateCallback(const Napi::CallbackInfo &info);
 
 class CallbackWrapper
