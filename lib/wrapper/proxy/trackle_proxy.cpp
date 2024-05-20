@@ -43,9 +43,9 @@ Napi::Number getMaxDevicePrivateKeyLength(const Napi::CallbackInfo &info)
 // FIXME: attribute e reserved per ora non restituiti
 void logCallbackCaller(const char *msg, int level, const char *category, void *attribute, void *reserved)
 {
-    auto iterator = callbacksMap.find(LOG_REF_CB);
+    auto iterator = systemCallbacksMap.find(LOG_REF_CB);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -76,7 +76,7 @@ void setLogCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in postFunctionCaller
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(LOG_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(LOG_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setLogCallback(logCallbackCaller);
 }
@@ -240,10 +240,10 @@ system_tick_t millisCallbackCaller()
 {
     // LOG(TRACE, "Called millisCallbackCaller");
 
-    auto iterator = callbacksMap.find(MILLIS_REF_CB);
+    auto iterator = systemCallbacksMap.find(MILLIS_REF_CB);
     Napi::Value result;
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         result = iterator->second.Call({});
     }
@@ -278,7 +278,7 @@ void setMillis(const Napi::CallbackInfo &info)
     refLogCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in postFunctionCaller
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(MILLIS_REF_CB), std::move(refLogCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(MILLIS_REF_CB), std::move(refLogCb)));
 
     trackleLibraryInstance.setMillis(millisCallbackCaller);
 
@@ -371,10 +371,10 @@ int sendCallbackCaller(const unsigned char *buf, uint32_t buflen, void *tmp)
 {
     LOG(TRACE, "Called sendCallbackCaller");
 
-    auto iterator = callbacksMap.find(SEND_REF_CB);
+    auto iterator = systemCallbacksMap.find(SEND_REF_CB);
     Napi::Value result;
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -420,7 +420,7 @@ void setSendCallback(const Napi::CallbackInfo &info)
         refCb.SuppressDestruct();
 
         // Create a pair of <string,reference> to call in sendCallbackCaller
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SEND_REF_CB), std::move(refCb)));
+        systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SEND_REF_CB), std::move(refCb)));
 
         trackleLibraryInstance.setSendCallback(sendCallbackCaller);
     }
@@ -438,12 +438,12 @@ void setSendCallback(const Napi::CallbackInfo &info)
 // FIXME: controllare che tmp sia restituito corretto (fatto di test)
 int rcvCallbackCaller(unsigned char *buf, uint32_t buflen, void *tmp)
 {
-    LOG(TRACE, "Called rcvCallbackCaller");
+    LOG(ERROR, "Called rcvCallbackCaller %d", buflen);
 
-    auto iterator = callbacksMap.find(RECEIVE_REF_CB);
+    auto iterator = systemCallbacksMap.find(RECEIVE_REF_CB);
     Napi::Value result;
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -489,7 +489,7 @@ void setReceiveCallback(const Napi::CallbackInfo &info)
         refCb.SuppressDestruct();
 
         // Create a pair of <string,reference> to call in sendCallbackCaller
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(RECEIVE_REF_CB), std::move(refCb)));
+        systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(RECEIVE_REF_CB), std::move(refCb)));
 
         trackleLibraryInstance.setReceiveCallback(rcvCallbackCaller);
     }
@@ -508,10 +508,10 @@ int connectCallbackCaller(const char *address, int port)
 {
     LOG(TRACE, "Called connectCallbackCaller");
 
-    auto iterator = callbacksMap.find(CONNECT_REF_CB);
+    auto iterator = systemCallbacksMap.find(CONNECT_REF_CB);
     Napi::Value result;
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -555,7 +555,7 @@ void setConnectCallback(const Napi::CallbackInfo &info)
         refCb.SuppressDestruct();
 
         // Create a pair of <string,reference> to call in sendCallbackCaller
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(CONNECT_REF_CB), std::move(refCb)));
+        systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(CONNECT_REF_CB), std::move(refCb)));
 
         trackleLibraryInstance.setConnectCallback(connectCallbackCaller);
     }
@@ -614,10 +614,10 @@ int disconnectCallbackCaller()
 {
     LOG(TRACE, "Called disconnectCallbackCaller");
 
-    auto iterator = callbacksMap.find(DISCONNECT_REF_CB);
+    auto iterator = systemCallbacksMap.find(DISCONNECT_REF_CB);
     Napi::Value result;
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         result = iterator->second.Call({});
     }
@@ -660,7 +660,7 @@ void setDisconnectCallback(const Napi::CallbackInfo &info)
         refCb.SuppressDestruct();
 
         // Create a pair of <string,reference> to call in sendCallbackCaller
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(DISCONNECT_REF_CB), std::move(refCb)));
+        systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(DISCONNECT_REF_CB), std::move(refCb)));
 
         trackleLibraryInstance.setDisconnectCallback(disconnectCallbackCaller);
     }
@@ -680,9 +680,9 @@ void systemTimeCallbackCaller(time_t time, unsigned int param, void *data)
 {
     LOG(TRACE, "Called systemTimeCallbackCaller");
 
-    auto iterator = callbacksMap.find(SYSTEM_TIME_REF_CB);
+    auto iterator = systemCallbacksMap.find(SYSTEM_TIME_REF_CB);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -724,7 +724,7 @@ void setSystemTimeCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in sendCallbackCaller
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SYSTEM_TIME_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SYSTEM_TIME_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setSystemTimeCallback(systemTimeCallbackCaller);
 
@@ -742,9 +742,9 @@ void systemRebootCallbackCaller(const char *data)
 {
     LOG(TRACE, "Called systemRebootCallbackCaller");
 
-    auto iterator = callbacksMap.find(SYS_REBOOT_REF_CB);
+    auto iterator = systemCallbacksMap.find(SYS_REBOOT_REF_CB);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -779,7 +779,7 @@ void setSystemRebootCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in setSleepCallback
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SYS_REBOOT_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(SYS_REBOOT_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setSystemRebootCallback(systemRebootCallbackCaller);
 
@@ -825,9 +825,9 @@ void completedPublishCallback(int error, const void *data, void *callbackData, v
 {
     LOG(TRACE, "Called completedPublishCallback");
 
-    auto iterator = callbacksMap.find(COMPLETE_PUBLISH_REF_CB);
+    auto iterator = systemCallbacksMap.find(COMPLETE_PUBLISH_REF_CB);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -868,7 +868,7 @@ void setCompletedPublishCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in setSleepCallback
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(COMPLETE_PUBLISH_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(COMPLETE_PUBLISH_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setCompletedPublishCallback(completedPublishCallback);
 
@@ -946,9 +946,9 @@ void loop(const Napi::CallbackInfo &info)
 int defaultPost(const char *args, bool isOwner, const char *funKey)
 {
     std::string name = std::string("POST_") + std::string(funKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = postCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != postCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1014,7 +1014,7 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
     result = trackleLibraryInstance.post(postFunName, defaultPost, postFunPermissionEnum);
     if (result == true)
     {
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
+        postCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
         LOG(TRACE, "postFunction was correctly done");
         return Napi::Boolean::New(env, result);
     }
@@ -1036,9 +1036,9 @@ Napi::Boolean post(const Napi::CallbackInfo &info)
 bool defaultBool(const char *paramString, const char *varKey)
 {
     std::string name = std::string("GET_") + std::string(varKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = getCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != getCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1057,9 +1057,9 @@ bool defaultBool(const char *paramString, const char *varKey)
 int defaultInt(const char *paramString, const char *varKey)
 {
     std::string name = std::string("GET_") + std::string(varKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = getCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != getCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1078,9 +1078,9 @@ int defaultInt(const char *paramString, const char *varKey)
 double defaultDouble(const char *paramString, const char *varKey)
 {
     std::string name = std::string("GET_") + std::string(varKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = getCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != getCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1099,9 +1099,9 @@ static char jsonResponse[1024];
 void *defaultJson(const char *paramString, const char *varKey)
 {
     std::string name = std::string("GET_") + std::string(varKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = getCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != getCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1121,9 +1121,9 @@ void *defaultJson(const char *paramString, const char *varKey)
 const char *defaultChar(const char *paramString, const char *varKey)
 {
     std::string name = std::string("GET_") + std::string(varKey);
-    auto iterator = callbacksMap.find(name);
+    auto iterator = getCallbacksMap.find(name);
 
-    if (iterator != callbacksMap.end())
+    if (iterator != getCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
 
@@ -1208,13 +1208,13 @@ Napi::Boolean get(const Napi::CallbackInfo &info)
 
     if (result == true)
     {
-        callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
-        LOG(TRACE, "postFunction was correctly done");
+        getCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(name), std::move(refCb)));
+        LOG(TRACE, "getFunction was correctly done");
         return Napi::Boolean::New(env, result);
     }
     else
     {
-        LOG(INFO, "postFunction wasn't correctly done");
+        LOG(INFO, "getFunction wasn't correctly done");
         return Napi::Boolean::New(env, result);
     }
 
@@ -1291,9 +1291,10 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
 
     if (!info[3].IsUndefined())
     {
-        char eventType = info[0].As<Napi::String>().Utf8Value()[0];
+
+        char eventType = info[3].As<Napi::String>().Utf8Value()[0];
         eventTypeEnum = (Event_Type)eventType;
-    }
+        }
 
     if (!info[4].IsUndefined())
     {
@@ -1324,11 +1325,11 @@ Napi::Boolean publish(const Napi::CallbackInfo &info)
 // codici per int  1: succes -1: error -2: un-auth (not the owner is making the call)
 int UpdateStateCallback(const char *function_key, const char *arg, ...)
 {
-    LOG(TRACE, "Called completedPublishCallback");
+    LOG(TRACE, "Called UpdateStateCallback");
 
-    auto iterator = callbacksMap.find(UPDATE_STATE_REF_CB);
+    auto iterator = systemCallbacksMap.find(UPDATE_STATE_REF_CB);
     Napi::Value result;
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
         // const char *strData = static_cast<const char *>(data);
@@ -1350,7 +1351,7 @@ int UpdateStateCallback(const char *function_key, const char *arg, ...)
 
 void setUpdateStateCallback(const Napi::CallbackInfo &info)
 {
-    LOG(TRACE, "Called setCompletedPublishCallback");
+    LOG(TRACE, "Called setUpdateStateCallback");
 
     Napi::Env env = info.Env();
 
@@ -1370,7 +1371,7 @@ void setUpdateStateCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in setSleepCallback
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(UPDATE_STATE_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(UPDATE_STATE_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setUpdateStateCallback(UpdateStateCallback);
 
@@ -1412,11 +1413,11 @@ Napi::Boolean syncState(const Napi::CallbackInfo &info)
 void ConnectionStatusCallback(Connection_Status_Type status)
 
 {
-    LOG(TRACE, "Called completedPublishCallback %d", status);
+    LOG(TRACE, "Called ConnectionStatusCallback %d", status);
 
-    auto iterator = callbacksMap.find(CONNECTION_STATUS_REF_CB);
+    auto iterator = systemCallbacksMap.find(CONNECTION_STATUS_REF_CB);
     Napi::Value result;
-    if (iterator != callbacksMap.end())
+    if (iterator != systemCallbacksMap.end())
     {
         Napi::Env env = iterator->second.Env();
         // const char *strData = static_cast<const char *>(data);
@@ -1436,7 +1437,7 @@ void ConnectionStatusCallback(Connection_Status_Type status)
 
 void setConnectionStatusCallback(const Napi::CallbackInfo &info)
 {
-    LOG(TRACE, "Called setCompletedPublishCallback");
+    LOG(TRACE, "Called setConnectionStatusCallback");
 
     Napi::Env env = info.Env();
 
@@ -1456,7 +1457,7 @@ void setConnectionStatusCallback(const Napi::CallbackInfo &info)
     refCb.SuppressDestruct();
 
     // Create a pair of <string,reference> to call in setSleepCallback
-    callbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(CONNECTION_STATUS_REF_CB), std::move(refCb)));
+    systemCallbacksMap.emplace(std::make_pair<std::string, Napi::FunctionReference>(std::string(CONNECTION_STATUS_REF_CB), std::move(refCb)));
 
     trackleLibraryInstance.setConnectionStatusCallback(ConnectionStatusCallback);
 

@@ -149,7 +149,7 @@ interface TrackleWrapper {
       buffer: Buffer,
       bufferLen: number,
       tmp: any
-    ) => number 
+    ) => number
   ): void;
 
   /**
@@ -163,7 +163,7 @@ interface TrackleWrapper {
       buffer: Buffer,
       bufferLen: number,
       tmp: any
-    ) => number 
+    ) => number
   ): number;
 
   /**
@@ -182,7 +182,7 @@ interface TrackleWrapper {
    * @param callback - The disconnect callback function.
    * @returns The result of the operation.
    */
-  setDisconnectCallback(callback?: () => number ): void;
+  setDisconnectCallback(callback?: () => number): void;
 
   /**
    * Sets the system time callback function.
@@ -286,19 +286,19 @@ interface TrackleWrapper {
     callback: (
       function_key: string,
       arg: string
-    ) => number 
+    ) => number
   ): void;
 
-    /**
-   * setConnectionStatusCallback to the server.
-   * @param status - The name of the func.
-   */
-    setConnectionStatusCallback(
-      callback: (
-        status: number
-      ) => void
-    ): void;
-  
+  /**
+ * setConnectionStatusCallback to the server.
+ * @param status - The name of the func.
+ */
+  setConnectionStatusCallback(
+    callback: (
+      status: number
+    ) => void
+  ): void;
+
 
   /**
    * syncState an event to the server.

@@ -19,7 +19,10 @@ static const std::string UPDATE_STATE_REF_CB = REF_CB_PREFIX + "update_state_ref
 static const std::string CONNECTION_STATUS_REF_CB = REF_CB_PREFIX + "connection_status_ref_cb";
 
 // Map to store Callbacks reference
-static std::unordered_map<std::string, Napi::FunctionReference> callbacksMap;
+static std::unordered_map<std::string, Napi::FunctionReference> systemCallbacksMap;
+static std::unordered_map<std::string, Napi::FunctionReference> postCallbacksMap;
+static std::unordered_map<std::string, Napi::FunctionReference> getCallbacksMap;
+static std::unordered_map<std::string, Napi::FunctionReference> subscribeCallbacksMap;
 
 // Setup Config
 Napi::Number getMaxDeviceIdLength(const Napi::CallbackInfo &info);
