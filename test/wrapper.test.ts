@@ -473,27 +473,6 @@ describe('Trackle tests', () => {
     }
   });
 
-
-  it('should check if subscribe to private events works, this test if we are not receiving events', (done) => {
-    let received = false;
-    
-    const sub1 = (name: string, data: string): string => {
-      received = true;
-      console.log(name)
-      trackle.unSubscribe();
-      return name;
-    };
-  
-    trackle.subscribe("greetings", sub1, Subscription_Scope_Type.MY_DEVICES);
-  
-    setTimeout(() => {
-      if (!received) {
-        done();
-      }
-    }, 5000); 
-  });
-
-
   it('should check if subscribe to private events works', (done) => {
     let received = false;
     
