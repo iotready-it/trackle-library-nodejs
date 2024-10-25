@@ -20,11 +20,21 @@ import { testPost } from './calbacks/post';
 dotenv.config();
 const myEmitter = new EventEmitter();
 let es : EventSource;
-if (process.env.DEVICE_ID) {
-  const PRIVATE_KEY = fs.readFileSync("./Keys/" + process.env.DEVICE_ID + ".der");
-  trackle.setKeys(PRIVATE_KEY);
-  trackle.setDeviceId(process.env.DEVICE_ID);
-}
+if (!process.env.DEVICE_ID) {
+  throw new Error('missing env DEVICE_ID')
+} 
+
+if (!process.env.CLIENT_ID) {
+  throw new Error('missing env CLIENT_ID')
+} 
+
+if (!process.env.CLIENT_SECRET) {
+  throw new Error('missing env CLIENT_SECRET')
+} 
+
+const PRIVATE_KEY = fs.readFileSync("./Keys/" + process.env.DEVICE_ID + ".der");
+trackle.setKeys(PRIVATE_KEY);
+trackle.setDeviceId(process.env.DEVICE_ID);
 
 const postData = JSON.stringify({
   client_id: process.env.CLIENT_ID || '',
